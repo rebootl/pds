@@ -34,7 +34,7 @@ GIT_WD="/home/cem/website/git-wd"
 #
 # 2) if not clone it
 #
-# 3) else pull --> pull is done on branches, below
+# 3) else pull --> pull is done on branches, do below, after 5)
 #
 # 4) for every branch in DEF_BRANCHES
 #
@@ -51,47 +51,93 @@ from git_functions import git_cmd
 #print(WD)
 # (the CWD seems to be the directory from where pds.py is called)
 
-def process_branch(repo_name, branch):
-    os.chdir( os.path.join(GIT_WD, repo_name) )
-    # (checkout the defined branch)
-    # --> evtl. make this nicer e.g. check in process_repo first
-    ret=git_cmd("checkout", [ branch ])
-    if ret > 0:
-        print("Branch not found, returning.")
-        return
+def process_dir_recurse(repo_name, branch):
+    dir=os.path.join(GIT_WD, repo_name)
 
-    # (update the branch)
-    # --> evtl. also make this nicer e.g. check if up-to-date
-    git_cmd("pull")
-
-    # (process content)
+    # workflow
+    #
+    # process content of this directory
+    #
+    # write out
 
 
 
-def process_repo(repo_barename):
-    repo_name=os.path.splitext(repo_barename)[0]
-
-    oldcwd=os.getcwd()
-
-#    print(repo_name)
+def checkout_all_repos(branch):
 
     # (get the cloned repos)
+    repos_list=os.listdir(GIT_WD)
+
+    has_branch_repo_list=[]
+
+    oldwd=os.getcwd()
+    for repo in repos_list:
+        os.chdir( os.path.join(GIT_WD, repo) )
+        # (checkout)
+        # --> evtl. make this nicer e.g. check if branch exists
+        ret=git_cmd("checkout", [ branch ])
+        if ret == 0:
+            # (add to return list)
+            has_branch_repo_list.append(repo)
+        else:
+            print("pds: repo <repo_name> has no branch <branch>")
+            continue
+
+        # (update the branch)
+        # --> evtl. also make this nicer e.g. check if up-to-date
+        git_cmd("pull")
+
+    os.chdir(oldwd)
+
+    return has_branch_repo_list
+
+
+def clone_all_repos():
+
+    # (get the bare repos)
+    bare_repos_list=os.listdir(REPO_DIR)
+
+    # (check for base-layout)
+    if not "base-layout.git" in bare_repos_list:
+        print("pds: base-layout.git repo not found, aborting.")
+        exit()
+
+    # (check if already cloned)
     cloned_repos_list=os.listdir(GIT_WD)
 
-#    print(cloned_repos_list)
+    for bare_repo in bare_repos_list:
+        repo_name=os.path.splitext(bare_repo)[0]
 
-    # (if the repo is not cloned yet, clone it)
-    if not repo_name in cloned_repos_list:
+        if repo_name in cloned_repos_list:
+            print("pds: repo <repo_name> already cloned, continuing...")
+            continue
+
+        # (clone)
+        oldwd=os.getcwd()
         os.chdir(GIT_WD)
         git_cmd("clone", [ os.path.join(REPO_DIR, repo_barename) ])
-
-    for branch in DEF_BRANCHES:
-    # --> evtl. make DEF_BRANCHES a default argument
-        process_branch(repo_name, branch)
+        os.chdir(oldpwd)
 
 
+def main(branches=DEF_BRANCHES):
 
-process_repo("base-layout.git")
+    # we need to clone and checkout _all_ repos before processing the content,
+    # this is needed for the menu creation
+    clone_all_repos()
+
+    # (checkout and process branch wise)
+    for branch in branches:
+
+        has_branch_repo_list=checkout_all_repos(branch)
+
+        # all the repos are ready, providing a directory structure to process
+        for repo in has_branch_repo_list:
+            print("repo: ", repo)
+            continue
+
+
+main([ "public" ])
+
+#process_repo("base-layout.git")
 
 '''update given repo'''
 # (check if repo exists)
