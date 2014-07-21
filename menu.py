@@ -141,9 +141,9 @@ def generate_repos_menu(branch, active_path):
     menu=""
     # generate the menu
     for repo in sorted(repos_list):
-        menu=menu+"<ul><h3>"+repo+"</h3>\n"
+        menu=menu+"<h3>"+repo+"</h3>\n"#<ul>\n"
         menu=menu+generate_menu_recurse(branch, repo, active_path)
-        menu=menu+"</ul>\n"
+#        menu=menu+"</ul>\n"
 
     return menu
 

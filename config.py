@@ -41,8 +41,8 @@ MENU_EXCLUDE_FILES_MD=[ "impressum" ]
 #HTML_TYPE="html5"
 
 # Pandoc table of content depth
-# (==> think not used atm)
-#TOC_DEPTH='5'
+# (--> think not used atm ==> is used)
+TOC_DEPTH='5'
 
 # Pandoc use div's to delimit sections
 SECTION_DIV=True
