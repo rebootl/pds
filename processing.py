@@ -12,7 +12,7 @@ from common import read_tb_and_content, pandoc_pipe, write_out, copy_file
 from plugin_handler import get_cdata, plugin_cdata_handler, back_substitute
 
 
-def prepare_pandoc(branch, tb_values, base_menu, repos_menu):
+def prepare_pandoc(branch, tb_values, base_menu, repos_menu, fortune_msg):
     '''collect the options for the output'''
 
     pandoc_opts=[]
@@ -44,6 +44,10 @@ def prepare_pandoc(branch, tb_values, base_menu, repos_menu):
 
     # --> include toc
 
+    # include fortune message
+    if config.MAKE_FORTUNE:
+        pandoc_opts.append('--variable=fortune:'+fortune_msg)
+
     # .. more opts here ..
 
     return pandoc_opts
@@ -67,7 +71,7 @@ def process_plugin_content(page_body):
     return page_body_subst, plugin_blocks, plugin_blocks_pdf
 
 
-def process_page(repo_name, branch, subpath, filename_md):
+def process_page(repo_name, branch, subpath, filename_md, fortune_msg):
 
     # workflow
     # - read title block and content
@@ -96,7 +100,7 @@ def process_page(repo_name, branch, subpath, filename_md):
     #pages_menu=[]
 
     # (put together)
-    pandoc_opts=prepare_pandoc(branch, tb_vals, base_menu, repos_menu)
+    pandoc_opts=prepare_pandoc(branch, tb_vals, base_menu, repos_menu, fortune_msg)
 
     # (process through pandoc)
     page_html_subst=pandoc_pipe(page_body_md_subst, pandoc_opts)
@@ -112,7 +116,7 @@ def process_page(repo_name, branch, subpath, filename_md):
     return page_html
 
 
-def process_dir_recurse(repo_name, branch, subpath=""):
+def process_dir_recurse(repo_name, branch, fortune_msg, subpath=""):
     dir=os.path.join(config.GIT_WD, repo_name, subpath)
 
     # workflow
@@ -162,7 +166,7 @@ def process_dir_recurse(repo_name, branch, subpath=""):
     # process dir content
     # (markdown files)
     for idx, file_md in enumerate(sorted(md_files_list)):
-        page_html=process_page(repo_name, branch, subpath, file_md)
+        page_html=process_page(repo_name, branch, subpath, file_md, fortune_msg)
 
         # (set out filename)
         if idx == 0:
@@ -186,4 +190,4 @@ def process_dir_recurse(repo_name, branch, subpath=""):
         # the subdir needs to be:
         subpath_new=os.path.join(subpath, subdir)
 
-        process_dir_recurse(repo_name, branch, subpath_new)
+        process_dir_recurse(repo_name, branch, fortune_msg, subpath_new)

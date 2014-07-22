@@ -17,6 +17,7 @@ import config
 
 from processing import process_dir_recurse
 from git_processing import clone_all_repos, checkout_all_repos
+from common import gen_fortune
 
 # (test current working directory)
 #WD=os.getcwd()
@@ -30,6 +31,14 @@ def main(branches=config.DEF_BRANCHES):
     # (clone all repos)
     clone_all_repos()
 
+    # generate a fortune
+    if config.MAKE_FORTUNE:
+        fortune_msg=gen_fortune()
+    else:
+        fortune_msg=""
+
+#    print("FORTUNE: ", fortune_msg)
+
     # (branch wise checkout and process)
     for branch in branches:
 
@@ -38,9 +47,9 @@ def main(branches=config.DEF_BRANCHES):
         # all the repos are ready, providing a directory structure to process
         for repo in has_branch_repo_list:
             print("repo: ", repo)
-            process_dir_recurse(repo, branch)
+            process_dir_recurse(repo, branch, fortune_msg)
 
-            continue
+#            continue
 
 
 

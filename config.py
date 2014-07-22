@@ -47,6 +47,11 @@ TOC_DEPTH='5'
 # Pandoc use div's to delimit sections
 SECTION_DIV=True
 
+# Generate a fortune message
+MAKE_FORTUNE=True
+# wrap the lines at n
+FORTUNE_WRAP_AT=40
+
 # System settings
 # ---------------
 

@@ -4,6 +4,7 @@
 
 import os
 import subprocess
+import textwrap
 
 import config
 
@@ -95,3 +96,20 @@ def copy_file(in_path, out_dir):
 
     exitcode=subprocess.call(cp_command)
     #proc=subprocess.Popen(cp_command)
+
+
+def gen_fortune():
+    '''Generate a fortune message.
+Using fortune.'''
+    # -s short
+    fortune_cmd=['fortune', '-s']
+
+    proc=subprocess.Popen(fortune_cmd, stdout=subprocess.PIPE)
+    output=proc.communicate()[0]
+
+    out_dec=output.decode('utf-8')
+
+    # wrap the text
+    out_wrap=textwrap.fill(out_dec, config.FORTUNE_WRAP_AT)
+
+    return out_wrap
