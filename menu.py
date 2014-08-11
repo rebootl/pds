@@ -83,13 +83,27 @@ def generate_menu_subpath(branch, repo_name, subpath, active_path):
 
 
 
-def generate_menu_recurse(branch, repo_name, active_path, dir=""):
+def generate_menu_recurse(branch, repo_name, active_path, ul_classname="", dir=""):
 
     # (tags)
-    tag_dir="<li>{}</li>\n"
+#    tag_dir="<li>{}</li>\n"
 
     # (get md links)
-    menu="<ul>\n"+generate_menu_subpath(branch, repo_name, dir, active_path)
+
+    if dir == "":
+        repo_name_id='id="repo-menu-'+repo_name+'"'
+    else:
+        repo_name_id=""
+
+    if ul_classname != "":
+        if repo_name in active_path:
+            format_class='class="'+ul_classname+' repo-menu-active"'
+        else:
+            format_class='class="'+ul_classname+'"'
+    else:
+        format_class=""
+
+    menu='<ul {} {}>\n'.format(repo_name_id, format_class)+generate_menu_subpath(branch, repo_name, dir, active_path)
 
     # (dir content)
     dir_abs=os.path.join(config.GIT_WD, repo_name, dir)
@@ -111,11 +125,14 @@ def generate_menu_recurse(branch, repo_name, active_path, dir=""):
     for subdir in subdirs:
             subdir_path_abs=os.path.join(dir_abs, subdir)
             # (add entry for directory)
-            menu=menu+tag_dir.format(subdir+"/")
+            menu=menu+'<li>'+subdir+'/'
 
             subdir_path_rel=os.path.relpath(subdir_path_abs, os.path.join(config.GIT_WD, repo_name))
      #       print("SUBDIR PATH REL: ", subdir_path_rel)
-            menu=menu+generate_menu_recurse(branch, repo_name, active_path, subdir_path_rel)
+
+            submenu=generate_menu_recurse(branch, repo_name, active_path, "", subdir_path_rel)
+
+            menu=menu+submenu+'</li>'
 
     # (add closing tag)
     menu=menu+"</ul>\n"
@@ -141,9 +158,15 @@ def generate_repos_menu(branch, active_path):
     menu=""
     # generate the menu
     for repo in sorted(repos_list):
-        menu=menu+"<h3>"+repo+"</h3>\n"#<ul>\n"
-        menu=menu+generate_menu_recurse(branch, repo, active_path)
-#        menu=menu+"</ul>\n"
+
+        if repo in active_path:
+            active_id="span-arrow-active"
+        else:
+            active_id=""
+
+        menu=menu+'<h3 onclick="javascript:show_menu(this, \'repo-menu-{repo_name}\')">{repo_name}<span class=\"arrow\" id=\"{id}\"></span></h3>\n'.format(repo_name=repo, id=active_id)
+        
+        menu=menu+generate_menu_recurse(branch, repo, active_path, "repo-menu")
 
     return menu
 

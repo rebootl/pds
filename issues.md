@@ -5,4 +5,4 @@
   on every regeneration of the page
   --> should be feasible to only generate a new message, let's say
       once a day, or on demand (!)
-
+  evtl. make an option to only recreate fortune on demand
