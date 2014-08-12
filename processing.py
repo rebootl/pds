@@ -11,7 +11,7 @@ from common import write_out, copy_file
 from page import Page
 
 
-def process_dir_recurse(repo_name, branch, fortune_msg, subpath=""):
+def process_dir_recurse(repo_name, branch, subpath=""):
 
     dir=os.path.join(config.GIT_WD, repo_name, subpath)
 
@@ -81,4 +81,4 @@ def process_dir_recurse(repo_name, branch, fortune_msg, subpath=""):
         # the subdir needs to be:
         subpath_new=os.path.join(subpath, subdir)
 
-        process_dir_recurse(repo_name, branch, fortune_msg, subpath_new)
+        process_dir_recurse(repo_name, branch, subpath_new)

@@ -4,7 +4,7 @@ import os
 
 import config
 
-from common import read_tb_and_content, pandoc_pipe
+from common import read_tb_and_content, pandoc_pipe, gen_fortune
 from plugin_handler import get_cdata, plugin_cdata_handler, back_substitute
 from menu import generate_base_menu, generate_repos_menu
 
@@ -17,9 +17,10 @@ HTML    <inst>.page_html
 '''
 
     # (instance counter)
-    inst_cnt=0
+    inst_count=0
 
     fortune_msg="fortune mesg"
+
 
     def __init__(self, repo_name, branch, subpath, filename_md):
 
@@ -34,6 +35,8 @@ HTML    <inst>.page_html
         # (call process right away)
         self.process()
 
+        Page.inst_count+=1
+
 
     def process(self):
 
@@ -47,6 +50,10 @@ HTML    <inst>.page_html
         self.base_menu=generate_base_menu(self.branch, self.filepath_md)
         self.repos_menu=generate_repos_menu(self.branch, self.filepath_md)
 
+        # (set fortune message)
+        if self.inst_count == 0:
+            self.set_fortune()
+
         # (prepare pandoc opts)
         self.prepare_pandoc()
 
@@ -58,6 +65,14 @@ HTML    <inst>.page_html
             self.page_html=back_substitute(self.page_html_subst, self.plugin_blocks)
         else:
             self.page_html=self.page_html_subst
+
+
+    def set_fortune(self):
+
+        if config.MAKE_FORTUNE:
+            Page.fortune_msg=gen_fortune()
+        else:
+            Page.fortune_msg=""
 
 
     def process_plugin_content(self):
