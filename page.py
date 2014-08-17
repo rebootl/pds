@@ -4,7 +4,7 @@ import os
 
 import config
 
-from common import read_tb_and_content, pandoc_pipe, gen_fortune
+from common import read_tb_and_content, pandoc_pipe, gen_fortune, write_out, read_file
 from plugin_handler import get_cdata, plugin_cdata_handler, back_substitute
 from menu import generate_base_menu, generate_repos_menu
 
@@ -22,12 +22,14 @@ HTML    <inst>.page_html
     fortune_msg="fortune mesg"
 
 
-    def __init__(self, repo_name, branch, subpath, filename_md):
+    def __init__(self, repo_name, branch, subpath, filename_md, new_fortune=False):
 
         self.repo_name=repo_name
         self.branch=branch
         self.subpath=subpath
         self.filename_md=filename_md
+
+        self.new_fortune=new_fortune
 
         # (construct md filepath)
         self.filepath_md=os.path.join(config.GIT_WD, self.repo_name, self.subpath, self.filename_md)
@@ -70,7 +72,17 @@ HTML    <inst>.page_html
     def set_fortune(self):
 
         if config.MAKE_FORTUNE:
-            Page.fortune_msg=gen_fortune()
+            if self.new_fortune:
+                Page.fortune_msg=gen_fortune()
+                # (store it)
+                filepath=os.path.join(config.STORE_WD, "fortune_msg")
+                write_out(Page.fortune_msg, filepath)
+            else:
+                filepath=os.path.join(config.STORE_WD, "fortune_msg")
+                if os.path.isfile(filepath):
+                    Page.fortune_msg=read_file(filepath)
+                else:
+                    print("Warning: No fortune message present yet.")
         else:
             Page.fortune_msg=""
 

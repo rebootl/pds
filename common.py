@@ -84,6 +84,18 @@ def write_out(content, outfile):
         outfile_o.write(content)
 
 
+def read_file(filepath):
+
+    if not os.path.isfile(filepath):
+        print("Warning: file not found: ", filepath)
+        return ""
+
+    with open(filepath, 'r') as f:
+        content=f.read()
+
+    return content
+
+
 def copy_file(in_path, out_dir):
     '''Call copy w/o preset directories.
 (Not recursive.)

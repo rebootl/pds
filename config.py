@@ -61,3 +61,7 @@ GIT_WD="/home/cem/website/git-wd"
 
 # markdown file extension
 MD_EXT=".md"
+
+# additional (persistent) working directory
+# (currently used to store the fortune message)
+STORE_WD="/home/cem/website/store-wd"
