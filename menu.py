@@ -8,7 +8,6 @@ import config
 from common import read_tb_lines
 
 
-
 class Menu:
 
     def __init__(self, branch, repo_name, active_path):
@@ -122,14 +121,7 @@ def generate_repos_menu(branch, active_path):
     # generate the menu
     for repo in sorted(repos_list):
 
-        if repo in active_path:
-            active_id="span-arrow-active"
-        else:
-            active_id=""
-
-        menu=menu+'<h3 onclick="javascript:show_menu(this, \'repo-menu-{repo_name}\')">{repo_name}<span class=\"arrow\" id=\"{id}\"></span></h3>\n'.format(repo_name=repo, id=active_id)
-
-        #menu=menu+generate_menu_recurse(branch, repo, active_path, "repo-menu")
+        menu=menu+'<h3>{}</h3>\n'.format(repo)
 
         repo_menu_inst = Menu(branch, repo, active_path)
         repo_menu=menu+repo_menu_inst.menu
