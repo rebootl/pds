@@ -1,4 +1,4 @@
-
+#!/usr/bin/python
 
 
 import os
@@ -23,60 +23,64 @@ class Menu:
         else:
             self.pre_dir=repo_name
         # (starting tag)
-        self.menu='<ul>\n'
+        self.menu=""
 
         self.generate_menu_recurse()
 
 
     def generate_menu_recurse(self):
 
+        self.menu=self.menu+'<ul>\n'
+
         # (get dir content)
-        self.dir_abs=os.path.join(config.GIT_WD, self.repo_name, self.curr_subdir)
-        print(self.dir_abs)
-        dir_content=os.listdir(self.dir_abs)
+        dir_abs=os.path.join(config.GIT_WD, self.repo_name, self.curr_subdir)
+
+        dir_content=os.listdir(dir_abs)
         dir_content.sort()
-        print(dir_content)
-        for file_num, file in enumerate(dir_content):
+
+        file_num=0
+        for file in dir_content:
+
+            filepath_abs=os.path.join(dir_abs, file)
 
             if file.endswith(config.MD_EXT):
-                self.make_entry_link(file, file_num)
 
-            elif os.path.isdir(os.path.join(self.dir_abs, file)) and file not in config.EXCLUDE_DIRS:
-                # create submenu
+                self.make_link_entry(file_num, file, filepath_abs)
+                # (need to count in here)
+                file_num+=1
+
+            elif os.path.isdir(filepath_abs) and file not in config.EXCLUDE_DIRS:
 
                 self.menu=self.menu+'<li>'+file+'/'
 
                 # (re-set current subdir)
-                subdir_path_abs=os.path.join(self.dir_abs, self.curr_subdir)
-                subdir_path_rel=os.path.relpath(subdir_path_abs, os.path.join(config.GIT_WD, self.repo_name))
+                subdir_path_rel=os.path.relpath(filepath_abs, os.path.join(config.GIT_WD, self.repo_name))
                 self.curr_subdir=subdir_path_rel
 
                 # (recurse)
-                submenu=self.generate_menu_recurse()
+                self.generate_menu_recurse()
 
-                self.menu=self.menu+submenu+'</li>'
+                self.menu=self.menu+'</li>\n'
 
-        self.menu=self.menu+'</ul>'
+        self.menu=self.menu+'</ul>\n'
 
 
-    def make_entry_link(self, filename_md, file_num):
+    def make_link_entry(self, file_num, filename_md, filepath_abs):
 
         filename_noext=os.path.splitext(filename_md)[0]
 
         # set the href
-
         if file_num == 0:
             filename="index.html"
         else:
             filename=filename_noext+".html"
 
         # --> use os.absdir (?) here
-        link_href="/"+os.path.join(self.pre_dir, self.curr_subdir, filename)
+        link_href="/"+os.path.join(self.branch, self.pre_dir, self.curr_subdir, filename)
 
         # set the link text
-
         # (get the page title from Pandoc title block)
-        filepath_abs=os.path.join(self.dir_abs, filename_md)
+        #filepath_abs=os.path.join(self.dir_abs, filename_md)
         # --> only read title here
         tb_title_list=read_tb_lines(filepath_abs)
         if tb_title_list == []:
