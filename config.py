@@ -29,12 +29,20 @@ HTML_TEMPLATE="/home/cem/website/templates/html5.html"
 # exclude directories from processing
 EXCLUDE_DIRS=[ ".git" ]
 
+
+
+# menu name for /index.html
+#MENU_INDEX_NAME="Home"
+
 # exclude markdown files containing these keywords in 
 # their name from the menus
 # (e.g. useful for footer content like impressum, legal 
 # notes or maybe in the future "posts" meaning single md 
 # files whose content will be integrated in other pages)
 MENU_EXCLUDE_FILES_MD=[ "impressum" ]
+
+# custom navigation: filename of an optional repo description file
+REPO_DESC_FILENAME="repo.desc"
 
 # Pandoc HTML type
 # (==> default to html5)
@@ -51,6 +59,8 @@ SECTION_DIV=True
 MAKE_FORTUNE=True
 # wrap the lines at n
 FORTUNE_WRAP_AT=40
+
+
 
 # System settings
 # ---------------

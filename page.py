@@ -6,8 +6,8 @@ import config
 
 from common import read_tb_and_content, pandoc_pipe, gen_fortune, write_out, read_file
 from plugin_handler import get_cdata, plugin_cdata_handler, back_substitute
-from menu import generate_base_menu, generate_repos_menu
-
+#from menu import generate_base_menu, generate_repos_menu
+from nav import primary_nav, secondary_nav
 
 class Page:
     '''Page, processing.
@@ -23,7 +23,6 @@ HTML    <inst>.page_html
 
 
     def __init__(self, repo_name, branch, subpath, filename_md, new_fortune=False):
-
         self.repo_name=repo_name
         self.branch=branch
         self.subpath=subpath
@@ -49,8 +48,11 @@ HTML    <inst>.page_html
         self.process_plugin_content()
 
         # (generate menus)
-        self.base_menu=generate_base_menu(self.branch, self.filepath_md)
-        self.repos_menu=generate_repos_menu(self.branch, self.filepath_md)
+        #self.base_menu=generate_base_menu(self.branch, self.filepath_md)
+        #self.repos_menu=generate_repos_menu(self.branch, self.filepath_md)
+
+        self.primary_nav=primary_nav(self.branch, self.filepath_md)
+        self.secondary_nav=secondary_nav(self.branch, self.filepath_md)
 
         # (set fortune message)
         if self.inst_count == 0:
@@ -136,8 +138,10 @@ Sets:
             self.pandoc_opts.append('--section-divs')
 
         # include menus
-        self.pandoc_opts.append('--variable=base-menu:'+self.base_menu)
-        self.pandoc_opts.append('--variable=repos-menu:'+self.repos_menu)
+        #self.pandoc_opts.append('--variable=base-menu:'+self.base_menu)
+        #self.pandoc_opts.append('--variable=repos-menu:'+self.repos_menu)
+        self.pandoc_opts.append('--variable=prim-nav:'+self.primary_nav)
+        self.pandoc_opts.append('--variable=second-nav:'+self.secondary_nav)
 
         # include fortune message
         if config.MAKE_FORTUNE:

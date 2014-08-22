@@ -5,7 +5,7 @@ import os
 
 import config
 
-from common import read_tb_lines
+from common import get_title
 
 
 class Menu:
@@ -66,27 +66,18 @@ class Menu:
 
     def make_link_entry(self, file_num, filename_md, filepath_abs):
 
-        filename_noext=os.path.splitext(filename_md)[0]
-
         # set the href
         if file_num == 0:
             filename="index.html"
         else:
+            filename_noext=os.path.splitext(filename_md)[0]
             filename=filename_noext+".html"
 
-        # --> use os.absdir (?) here
-        link_href="/"+os.path.join(self.branch, self.pre_dir, self.curr_subdir, filename)
+        link_href=os.path.abspath(os.path.join(self.branch, self.pre_dir, self.curr_subdir, filename))
 
         # set the link text
         # (get the page title from Pandoc title block)
-        #filepath_abs=os.path.join(self.dir_abs, filename_md)
-        # --> only read title here
-        tb_title_list=read_tb_lines(filepath_abs)
-        if tb_title_list == []:
-            # (use the filename as fallback)
-            link_text=filename_noext
-        else:
-            link_text=tb_title_list[0]
+        link_text=get_title(filepath_abs)
 
         # set active class
         if filepath_abs == self.active_path:
