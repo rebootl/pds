@@ -28,6 +28,7 @@ import re
 # --> Pandoc adds newlines into the div now...
 # (My way of substitution is simple but it seems also fragile...)
 # ==> adding newlines here to fix it, quick but still ugly...
+# --> maybe use some sort of python temporary filename
 PLUGIN_PLACEHOLDER='<div id="placeholder">\nSomething\n</div>'
 
 # Functions
