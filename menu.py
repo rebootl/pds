@@ -10,13 +10,13 @@ from common import get_title
 
 class Menu:
 
-    def __init__(self, branch, repo_name, active_path):
+    def __init__(self, branch, repo_name, active_path, curr_subdir=""):
 
         self.branch=branch
         self.repo_name=repo_name
         self.active_path=active_path
         # (starting subdir)
-        self.curr_subdir=""
+        self.curr_subdir=curr_subdir
         if repo_name == config.BASE_REPO_NAME:
             self.pre_dir=""
         else:
@@ -73,7 +73,8 @@ class Menu:
             filename_noext=os.path.splitext(filename_md)[0]
             filename=filename_noext+".html"
 
-        link_href=os.path.abspath(os.path.join(self.branch, self.pre_dir, self.curr_subdir, filename))
+        # (using os.path.abspath does not work here)
+        link_href=os.path.join('/', self.branch, self.pre_dir, self.curr_subdir, filename)
 
         # set the link text
         # (get the page title from Pandoc title block)
@@ -90,31 +91,3 @@ class Menu:
 
         self.menu=self.menu+link_line
 
-
-
-def generate_base_menu(branch, active_path):
-
-    base_menu_inst = Menu(branch, config.BASE_REPO_NAME, active_path)
-    base_menu=base_menu_inst.menu
-
-    return base_menu
-
-
-def generate_repos_menu(branch, active_path):
-
-    # get all repos
-    repos_list=os.listdir(config.GIT_WD)
-
-    # filter out the "base" repo
-    repos_list.remove(config.BASE_REPO_NAME)
-
-    menu=""
-    # generate the menu
-    for repo in sorted(repos_list):
-
-        menu=menu+'<h3>{}</h3>\n'.format(repo)
-
-        repo_menu_inst = Menu(branch, repo, active_path)
-        repo_menu=menu+repo_menu_inst.menu
-
-    return repo_menu

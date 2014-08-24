@@ -52,7 +52,7 @@ HTML    <inst>.page_html
         #self.repos_menu=generate_repos_menu(self.branch, self.filepath_md)
 
         self.primary_nav=primary_nav(self.branch, self.filepath_md)
-        self.secondary_nav=secondary_nav(self.branch, self.filepath_md)
+        self.secondary_nav=secondary_nav(self.branch, self.repo_name, self.filepath_md)
 
         # (set fortune message)
         if self.inst_count == 0:

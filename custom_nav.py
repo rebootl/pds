@@ -56,7 +56,8 @@ def repos_nav_list(branch):
     if repos_list == []:
         return ""
 
-    menu='<li><ul>\n'
+    menu='<li id="repos-list"><a href="#">Repositories</a><ul>\n'
+#    menu=menu+'<li>Repositories</li>\n'
 
     # add an item for every repo
     # (currently these do not receive an active class,
@@ -74,7 +75,7 @@ def repos_nav_list(branch):
         else:
             link_desc=""
 
-        menu=menu+'<li><a href="{}">{}</a>{}</li>'.format(link_src, link_text, link_desc)
+        menu=menu+'<li><a href="{}">{}</a>{}</li>\n'.format(link_src, link_text, link_desc)
 
     menu=menu+'</ul></li>\n'
 
