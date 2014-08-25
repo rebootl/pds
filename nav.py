@@ -72,7 +72,7 @@ For the other repos it'll create a full menu for the active repository.
 
     else:
 
-        menu='<h3>{}</h3>'.format(repo_name)        
+        menu='<h2>Repository:</h2>\n<h3>{}</h3>\n'.format(repo_name)
         menu_inst=Menu(branch, repo_name, active_path)
         menu=menu+menu_inst.menu
 

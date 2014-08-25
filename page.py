@@ -104,7 +104,9 @@ Sets:
 
         # process the plug-in content
         if self.cdata_blocks != []:
-            self.plugin_blocks, self.plugin_blocks_pdf = plugin_cdata_handler(self.subdir, self.cdata_blocks)
+            # --> self.subpath correct ?
+            #print("self.subpath: ", self.subpath)
+            self.plugin_blocks, self.plugin_blocks_pdf = plugin_cdata_handler(self.branch, self.subpath, self.cdata_blocks)
 
         else:
             self.plugin_blocks=[]

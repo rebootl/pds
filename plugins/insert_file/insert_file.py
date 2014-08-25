@@ -31,7 +31,7 @@ import os
 import config
 
 # common functions
-from modules.common import pandoc_pipe
+from common import pandoc_pipe
 
 ## Plugin config variables:
 INSERT_FILE_CLASS='InsertFile'

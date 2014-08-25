@@ -26,7 +26,7 @@ import shutil
 import config
 
 # common
-from modules.common import copy_file_abs
+from common import copy_file_abs
 
 # resolution (for HTML output)
 # (in dpi)

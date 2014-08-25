@@ -138,3 +138,14 @@ Using fortune.'''
     out_wrap=textwrap.fill(out_dec, config.FORTUNE_WRAP_AT)
 
     return out_wrap
+
+
+# (from new_simple_cms)
+def copy_file_abs(inpath, out_dir):
+    '''Call copy w/o preset directories.
+(Not recursive.)
+--> shutil.copy could be used for this.'''
+    # using cp -u
+    cp_command=['cp', '-u', inpath, out_dir]
+
+    proc=subprocess.Popen(cp_command)

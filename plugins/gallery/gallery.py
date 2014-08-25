@@ -37,7 +37,7 @@ import subprocess
 import config
 
 # common functions
-from modules.common import pandoc_pipe
+from common import pandoc_pipe
 
 
 # Plugin settings
