@@ -142,8 +142,8 @@ Sets:
         # include menus
         #self.pandoc_opts.append('--variable=base-menu:'+self.base_menu)
         #self.pandoc_opts.append('--variable=repos-menu:'+self.repos_menu)
-        self.pandoc_opts.append('--variable=prim-nav:'+self.primary_nav)
-        self.pandoc_opts.append('--variable=second-nav:'+self.secondary_nav)
+        self.pandoc_opts.append('--variable=primary-nav:'+self.primary_nav)
+        self.pandoc_opts.append('--variable=secondary-nav:'+self.secondary_nav)
 
         # include fortune message
         if config.MAKE_FORTUNE:
