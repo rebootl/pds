@@ -64,11 +64,14 @@ For the other repos it'll create a full menu for the active repository.
         active_reldir=os.path.dirname(active_relpath)
         #print("active_reldir: ", active_reldir)
 
-        if active_reldir != "":
-            menu_inst=Menu(branch, repo_name, active_path, active_reldir)
-            menu=menu_inst.menu
-        else:
+        if active_reldir == "":
             return ""
+
+        menu_inst=Menu(branch, repo_name, active_path, active_reldir)
+        if menu_inst.link_cnt <= 1:
+            return ""
+        else:
+            menu=menu+menu_inst.menu
 
     else:
 

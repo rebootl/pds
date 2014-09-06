@@ -23,6 +23,8 @@ class Menu:
             self.pre_dir=repo_name
         # (starting tag)
         self.menu=""
+        # (link counter)
+        self.link_cnt=0
 
         self.generate_menu_recurse()
 
@@ -65,6 +67,9 @@ class Menu:
 
 
     def make_link_entry(self, file_num, filename_md, filepath_abs):
+
+        # count the links
+        self.link_cnt=self.link_cnt+1
 
         # set the href
         if file_num == 0:
