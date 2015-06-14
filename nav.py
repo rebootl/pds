@@ -5,14 +5,13 @@ import os
 
 import config
 
-from custom_nav import base_nav_list, repos_nav_list
 from common import get_title
 from menu import Menu
 
 def primary_nav(branch, active_path):
-    '''Generate the (custom) primary navigation.
+    '''Generate the primary navigation.
 
-Containing base_nav_list and repos_nav_list.
+Containing the main items of the base-layout.
 '''
 
     # index.html
@@ -42,7 +41,8 @@ Containing base_nav_list and repos_nav_list.
     # additional items (subdirectories)
     menu=menu+base_nav_list(branch, active_path)
     # repos sublist item
-    menu=menu+repos_nav_list(branch)
+    # --> repos shall be done separately
+#    menu=menu+repos_nav_list(branch)
     #menu=menu+'<li>Repositories</li>'
 
     menu=menu+'</ul>\n'
@@ -75,8 +75,44 @@ For the other repos it'll create a full menu for the active repository.
 
     else:
 
-        menu='<h2>Repository:</h2>\n<h3>{}</h3>\n'.format(repo_name)
+#        menu='<h2>Repository:</h2>\n<h3>{}</h3>\n'.format(repo_name)
+        menu='<h3>{}</h3>\n'.format(repo_name)
         menu_inst=Menu(branch, repo_name, active_path)
         menu=menu+menu_inst.menu
+
+    return menu
+
+
+def base_nav_list(branch, active_path):
+    '''Generate the base navigation.
+
+Contains base-layout items (directories)
+'''
+
+    # base-layout items
+    dir=os.path.join(config.GIT_WD, config.BASE_REPO_NAME)
+    dir_content=os.listdir(dir)
+
+    menu=""
+
+    for file in dir_content:
+
+        filepath_abs=os.path.join(dir, file)
+
+        if os.path.isdir(filepath_abs) and file not in config.EXCLUDE_DIRS:
+
+            # (href)
+            link_href=os.path.join('/', branch, file)
+
+            # (link text)
+            # --> the link text is the filename
+
+            # (active class)
+            if filepath_abs in active_path:
+                link_class='class="active"'
+            else:
+                link_class=""
+
+            menu=menu+'<li><a {} href="{}">{}</a></li>\n'.format(link_class, link_href, file)
 
     return menu

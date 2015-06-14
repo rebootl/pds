@@ -8,6 +8,7 @@ from common import read_tb_and_content, pandoc_pipe, gen_fortune, write_out, rea
 from plugin_handler import get_cdata, plugin_cdata_handler, back_substitute
 #from menu import generate_base_menu, generate_repos_menu
 from nav import primary_nav, secondary_nav
+from custom_nav import custom_nav
 
 class Page:
     '''Page, processing.
@@ -41,30 +42,32 @@ HTML    <inst>.page_html
 
     def process(self):
 
-        # (read markdown and title block)
+        # read markdown and title block
         self.page_body_md, self.tb_values=read_tb_and_content(self.filepath_md, config.TB_LINES)
 
-        # (substitute and process plugin content)
+        # substitute and process plugin content
         self.process_plugin_content()
 
-        # (generate menus)
+        # include navigation
         #self.base_menu=generate_base_menu(self.branch, self.filepath_md)
         #self.repos_menu=generate_repos_menu(self.branch, self.filepath_md)
 
         self.primary_nav=primary_nav(self.branch, self.filepath_md)
         self.secondary_nav=secondary_nav(self.branch, self.repo_name, self.filepath_md)
+        # (custom nav)
+        self.custom_nav=custom_nav(self.branch)
 
-        # (set fortune message)
+        # set fortune message
         if self.inst_count == 0:
             self.set_fortune()
 
-        # (prepare pandoc opts)
+        # prepare pandoc opts
         self.prepare_pandoc()
 
-        # (process through pandoc)
+        # process through pandoc
         self.page_html_subst=pandoc_pipe(self.page_body_subst, self.pandoc_opts)
 
-        # (back-substitute plugin content)
+        # back-substitute plugin content
         if self.plugin_blocks != []:
             self.page_html=back_substitute(self.page_html_subst, self.plugin_blocks)
         else:
@@ -139,15 +142,16 @@ Sets:
         if config.SECTION_DIV:
             self.pandoc_opts.append('--section-divs')
 
-        # include menus
+        # include navigation
         #self.pandoc_opts.append('--variable=base-menu:'+self.base_menu)
         #self.pandoc_opts.append('--variable=repos-menu:'+self.repos_menu)
         self.pandoc_opts.append('--variable=primary-nav:'+self.primary_nav)
         self.pandoc_opts.append('--variable=secondary-nav:'+self.secondary_nav)
+        self.pandoc_opts.append('--variable=custom-nav:'+self.custom_nav)
 
         # include fortune message
         if config.MAKE_FORTUNE:
             self.pandoc_opts.append('--variable=fortune:'+self.fortune_msg)
 
-        # .. more opts here ..
+        # ... add more opts here ...
         

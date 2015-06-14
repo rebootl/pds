@@ -8,37 +8,12 @@ import config
 from menu import Menu
 
 
-def base_nav_list(branch, active_path):
-    '''Generate the base navigation.
+def custom_nav(branch):
+    '''Main custom nav function.
 
-Contains base-layout items (directories)
-'''
+This is called from page/Page class and can/should be individually adapted.'''
 
-    # base-layout items
-    dir=os.path.join(config.GIT_WD, config.BASE_REPO_NAME)
-    dir_content=os.listdir(dir)
-
-    menu=""
-
-    for file in dir_content:
-
-        filepath_abs=os.path.join(dir, file)
-
-        if os.path.isdir(filepath_abs) and file not in config.EXCLUDE_DIRS:
-
-            # (href)
-            link_href=os.path.join('/', branch, file)
-
-            # (link text)
-            # --> the link text is the filename
-
-            # (active class)
-            if filepath_abs in active_path:
-                link_class='class="active"'
-            else:
-                link_class=""
-
-            menu=menu+'<li><a {} href="{}">{}</a></li>\n'.format(link_class, link_href, file)
+    menu=repos_nav_list(branch)
 
     return menu
 
@@ -56,7 +31,7 @@ def repos_nav_list(branch):
     if repos_list == []:
         return ""
 
-    menu='<li id="repos-list"><a href="#">Repositories</a><ul>\n'
+    menu='<li id="repos-list"><h3>Repositories</h3><ul>\n'
 #    menu=menu+'<li>Repositories</li>\n'
 
     # add an item for every repo
