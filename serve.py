@@ -19,5 +19,5 @@ import config
 os.chdir(config.PUBLISH_DIR)
 
 ## Server:
-serve=HTTPServer(('', 8000), CGIHTTPRequestHandler)
+serve=HTTPServer(('', 8001), CGIHTTPRequestHandler)
 serve.serve_forever()

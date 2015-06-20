@@ -11,20 +11,20 @@
 DEF_BRANCHES=[ "public", "private", "preview" ]
 
 # the repository path
-REPO_DIR="/home/cem/website/repos"
+REPO_DIR="/home/cem/website2/repos"
 
 # the name of the base repo
 BASE_REPO_NAME="base-layout"
 
 # the publish directory
-PUBLISH_DIR="/home/cem/website/http-serv"
+PUBLISH_DIR="/home/cem/website2/http-serv"
 
 # Pandoc title block lines
 TB_LINES=['title', 'author', 'date']
 #TB_LINES=['title', 'author', 'date', 'time']
 
 # Pandoc HTML template
-HTML_TEMPLATE="/home/cem/website/templates/html5.html"
+HTML_TEMPLATE="/home/cem/website2/templates/html5.html"
 
 # exclude directories from processing
 EXCLUDE_DIRS=[ ".git" ]
@@ -67,11 +67,11 @@ FORTUNE_WRAP_AT=40
 
 # git working directory
 # (clones will be placed here)
-GIT_WD="/home/cem/website/git-wd"
+GIT_WD="/home/cem/website2/git-wd"
 
 # markdown file extension
 MD_EXT=".md"
 
 # additional (persistent) working directory
 # (currently used to store the fortune message)
-STORE_WD="/home/cem/website/store-wd"
+STORE_WD="/home/cem/website2/store-wd"

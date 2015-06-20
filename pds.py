@@ -17,7 +17,6 @@ import config
 
 from processing import process_dir_recurse
 from git_processing import clone_all_repos, checkout_all_repos
-from common import gen_fortune
 
 # (test current working directory)
 #WD=os.getcwd()
@@ -34,7 +33,7 @@ def main(branches=config.DEF_BRANCHES):
     # (branch wise checkout and process)
     for branch in branches:
 
-        has_branch_repo_list=checkout_all_repos(branch)
+        has_branch_repo_list = checkout_all_repos(branch)
 
         # all the repos are ready, providing a directory structure to process
         for repo in has_branch_repo_list:
