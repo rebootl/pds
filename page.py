@@ -5,6 +5,7 @@ from common import read_tb_and_content, pandoc_pipe, write_out, read_file
 from plugin_handler import get_cdata, plugin_cdata_handler, back_substitute
 #from menu import generate_base_menu, generate_repos_menu
 from nav import primary_nav, secondary_nav
+from custom_nav import repos_nav_list
 
 class Page:
     '''Page, processing.
@@ -13,19 +14,22 @@ Retrieve output:
 HTML    <inst>.page_html
 '''
 
-    # (instance counter)
+    # instance counter
     inst_count=0
 
-    def __init__(self, repo_name, branch, subpath, filename_md):
+    def __init__(self, repo_name, branch, subpath, filename_md, idx):
         self.repo_name = repo_name
         self.branch = branch
         self.subpath = subpath
         self.filename_md = filename_md
+        self.idx = idx
 
-        # (construct md filepath)
+        self.repo_list = ""
+
+        # construct md filepath
         self.filepath_md = os.path.join(config.GIT_WD, self.repo_name, self.subpath, self.filename_md)
 
-        # (call process right away)
+        # call process right away
         self.process()
 
         Page.inst_count += 1
@@ -41,6 +45,11 @@ HTML    <inst>.page_html
         # navigation
         self.primary_nav = primary_nav(self.branch, self.filepath_md)
         self.secondary_nav = secondary_nav(self.branch, self.repo_name, self.filepath_md)
+
+        # set repository list on main page
+        if self.repo_name == config.BASE_REPO_NAME and self.idx == 0 and self.subpath == "":
+            self.repo_list = repos_nav_list(self.branch)
+            print("HOHO")
 
         # prepare pandoc opts
         self.prepare_pandoc()
@@ -107,5 +116,9 @@ Sets:
         self.pandoc_opts.append('--variable=primary-nav:'+self.primary_nav)
         self.pandoc_opts.append('--variable=secondary-nav:'+self.secondary_nav)
 #        self.pandoc_opts.append('--variable=custom-nav:'+self.custom_nav)
+
+        # set repository list on main page
+        if self.repo_list != "":
+            self.pandoc_opts.append('--variable=repo-list:'+self.repo_list)
 
         # ... add more opts here ...

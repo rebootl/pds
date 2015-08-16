@@ -29,9 +29,9 @@ def repos_nav_list(branch):
 
     # (return if empty)
     if repos_list == []:
-        return ""
+        return "No other repositories found yet..."
 
-    menu='<li id="repos-list"><h3>Repositories</h3><ul>\n'
+    menu='<ul>\n'
 #    menu=menu+'<li>Repositories</li>\n'
 
     # add an item for every repo
@@ -52,7 +52,7 @@ def repos_nav_list(branch):
 
         menu=menu+'<li><a href="{}">{}</a>{}</li>\n'.format(link_src, link_text, link_desc)
 
-    menu=menu+'</ul></li>\n'
+    menu=menu+'</ul>\n'
 
     return menu
 

@@ -15,10 +15,10 @@ def process_dir_recurse(repo_name, branch, subpath=""):
 
     dir = os.path.join(config.GIT_WD, repo_name, subpath)
 
-    # (get directory content)
+    # get directory content
     dir_content_list = os.listdir(dir)
 
-    # (filter dir content)
+    # filter dir content
     md_files_list = []
     subdirs_list = []
     other_files = []
@@ -44,7 +44,7 @@ def process_dir_recurse(repo_name, branch, subpath=""):
         if excl_dir in subdirs_list:
             subdirs_list.remove(excl_dir)
 
-    # (set out dir)
+    # set out dir
     if repo_name == config.BASE_REPO_NAME:
         out_dir=os.path.join(config.PUBLISH_DIR, branch, subpath)
     else:
@@ -55,28 +55,28 @@ def process_dir_recurse(repo_name, branch, subpath=""):
     for idx, filename_md in enumerate(sorted(md_files_list)):
 
         # generate instance
-        page_inst = Page(repo_name, branch, subpath, filename_md)
+        page_inst = Page(repo_name, branch, subpath, filename_md, idx)
 
-        # (set out filename)
+        # set out filename
         if idx == 0:
             out_filename = "index.html"
         else:
             out_filename = os.path.splitext(filename_md)[0]+".html"
 
-        # (set out path)
+        # set out path
         out_filepath = os.path.join(out_dir, out_filename)
 
-        # (write out)
+        # write out
         write_out(page_inst.page_html, out_filepath)
 
-    # (copy remaining files)
+    # copy remaining files
     for file in other_files:
         in_filepath = os.path.join(dir, file)
         copy_file(in_filepath, out_dir)
 
-    # recurse --> not for now
-    #for subdir in subdirs_list:
-    #    # the subdir needs to be:
-    #    subpath_new=os.path.join(subpath, subdir)
-    #
-    #    process_dir_recurse(repo_name, branch, subpath_new)
+    # recurse
+    for subdir in subdirs_list:
+        # the subdir needs to be:
+        subpath_new=os.path.join(subpath, subdir)
+    
+        process_dir_recurse(repo_name, branch, subpath_new)
