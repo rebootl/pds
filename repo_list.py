@@ -1,33 +1,20 @@
-#!/usr/bin/python
-'''Custom functions to generate the navigation.'''
-
 import os
 
 import config
 
-from menu import Menu
+#from menu import Menu
+from common import get_title
 
-
-def custom_nav(branch):
-    '''Main custom nav function.
-
-This is called from page/Page class and can/should be individually adapted.'''
-
-    menu=repos_nav_list(branch)
-
-    return menu
-
-
-def repos_nav_list(branch):
+def gen_repo_list(branch):
     '''Generate a list of repositories with descriptions.'''
 
     # get the repos from git-wd
     repos_list=os.listdir(config.GIT_WD)
 
-    # (filter base-repo)
+    # filter out base-repo
     repos_list.remove(config.BASE_REPO_NAME)
 
-    # (return if empty)
+    # return if empty
     if repos_list == []:
         return "No other repositories found yet..."
 
@@ -37,6 +24,7 @@ def repos_nav_list(branch):
     # add an item for every repo
     # (currently these do not receive an active class,
     #  but a description from desc-repo)
+    # change: use dir name as title and markdown title as description
     for repo in repos_list:
 
         # (these links go to the repo/index.html)
@@ -58,14 +46,39 @@ def repos_nav_list(branch):
 
 
 def get_repo_desc(repo):
+    '''get a repo/directory description text
 
+if present use the description file
+if not present use the title from the first markdown file
+fallback to text
+'''
+    # try description file
     desc_filepath=os.path.join(config.GIT_WD, repo, config.REPO_DESC_FILENAME)
 
     if os.path.isfile(desc_filepath):
-
         with open(desc_filepath, 'r') as f:
-            description=f.read()
-    else:
-        description=""
+            desc = f.read()
+        return desc
 
-    return description
+    # try the first md file    
+    repo_filepath_abs = os.path.join(config.GIT_WD, repo)
+
+    repo_files = os.listdir(repo_filepath_abs)
+
+    first_md_file = ""
+    for file in sorted(repo_files):
+        if file.endswith(config.MD_EXT):
+            first_md_file = file
+            break
+
+    if first_md_file == "":
+        return "No description (markdown file) available, yet..."
+
+    md_filepath_abs = os.path.join(repo_filepath_abs, first_md_file)
+
+    desc = get_title(md_filepath_abs)
+
+    if desc == "":
+        return "No description (page title) available..."
+
+    return desc

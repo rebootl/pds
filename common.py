@@ -59,12 +59,13 @@ def read_tb_lines(filepath_md, line_numbers=[0]):
 def get_title(filepath_md):
     '''Get the page title as link text, returning the filename as fallback.'''
 
-    tb_title_list=read_tb_lines(filepath_md, [0])
+    tb_title_list = read_tb_lines(filepath_md, [0])
     if tb_title_list == []:
         # (use the filename w/o extension as fallback)
-        link_text=os.path.splitext(os.path.basename(filepath_md))[0]
+        #link_text=os.path.splitext(os.path.basename(filepath_md))[0]
+        link_text = ""
     else:
-        link_text=tb_title_list[0]
+        link_text = tb_title_list[0]
 
     return link_text
 

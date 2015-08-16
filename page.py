@@ -5,7 +5,7 @@ from common import read_tb_and_content, pandoc_pipe, write_out, read_file
 from plugin_handler import get_cdata, plugin_cdata_handler, back_substitute
 #from menu import generate_base_menu, generate_repos_menu
 from nav import primary_nav, secondary_nav
-from custom_nav import repos_nav_list
+from repo_list import gen_repo_list
 
 class Page:
     '''Page, processing.
@@ -48,8 +48,9 @@ HTML    <inst>.page_html
 
         # set repository list on main page
         if self.repo_name == config.BASE_REPO_NAME and self.idx == 0 and self.subpath == "":
-            self.repo_list = repos_nav_list(self.branch)
-            print("HOHO")
+            self.repo_list = gen_repo_list(self.branch)
+            # (debug print)
+            print("Placed repo list.")
 
         # prepare pandoc opts
         self.prepare_pandoc()
