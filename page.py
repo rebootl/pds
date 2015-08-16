@@ -4,7 +4,8 @@ import config
 from common import read_tb_and_content, pandoc_pipe, write_out, read_file
 from plugin_handler import get_cdata, plugin_cdata_handler, back_substitute
 #from menu import generate_base_menu, generate_repos_menu
-from nav import gen_primary_nav, gen_dir_nav
+from nav_prim import gen_primary_nav
+from nav_dir import gen_dir_nav
 from repo_list import gen_repo_list
 
 class Page:
