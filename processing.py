@@ -55,7 +55,7 @@ def process_dir_recurse(repo_name, branch, subpath=""):
     for idx, filename_md in enumerate(sorted(md_files_list)):
 
         # generate instance
-        page_inst = Page(repo_name, branch, subpath, filename_md, idx)
+        page_inst = Page(branch, repo_name, subpath, filename_md, idx)
 
         # set out filename
         if idx == 0:

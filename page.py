@@ -4,7 +4,7 @@ import config
 from common import read_tb_and_content, pandoc_pipe, write_out, read_file
 from plugin_handler import get_cdata, plugin_cdata_handler, back_substitute
 #from menu import generate_base_menu, generate_repos_menu
-from nav import primary_nav, secondary_nav
+from nav import gen_primary_nav, gen_dir_nav
 from repo_list import gen_repo_list
 
 class Page:
@@ -17,7 +17,7 @@ HTML    <inst>.page_html
     # instance counter
     inst_count=0
 
-    def __init__(self, repo_name, branch, subpath, filename_md, idx):
+    def __init__(self, branch, repo_name, subpath, filename_md, idx):
         self.repo_name = repo_name
         self.branch = branch
         self.subpath = subpath
@@ -43,8 +43,9 @@ HTML    <inst>.page_html
         self.process_plugin_content()
 
         # navigation
-        self.primary_nav = primary_nav(self.branch, self.filepath_md)
-        self.secondary_nav = secondary_nav(self.branch, self.repo_name, self.filepath_md)
+        self.primary_nav = gen_primary_nav(self.branch, self.filepath_md)
+#       self.secondary_nav = secondary_nav(self.branch, self.repo_name, self.filepath_md)
+        self.dir_nav = gen_dir_nav(self.branch, self.repo_name, self.subpath, self.filepath_md)
 
         # set repository list on main page
         if self.repo_name == config.BASE_REPO_NAME and self.idx == 0 and self.subpath == "":
@@ -115,11 +116,14 @@ Sets:
 
         # include navigation
         self.pandoc_opts.append('--variable=primary-nav:'+self.primary_nav)
-        self.pandoc_opts.append('--variable=secondary-nav:'+self.secondary_nav)
+#        self.pandoc_opts.append('--variable=secondary-nav:'+self.secondary_nav)
 #        self.pandoc_opts.append('--variable=custom-nav:'+self.custom_nav)
 
         # set repository list on main page
         if self.repo_list != "":
             self.pandoc_opts.append('--variable=repo-list:'+self.repo_list)
+
+        # add directory navigation
+        self.pandoc_opts.append('--variable=dir-nav:'+self.dir_nav)
 
         # ... add more opts here ...

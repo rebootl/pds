@@ -1,6 +1,4 @@
-
-
-
+'''common functions'''
 
 import os
 import subprocess
@@ -150,3 +148,40 @@ def copy_file_abs(inpath, out_dir):
     cp_command=['cp', '-u', inpath, out_dir]
 
     proc=subprocess.Popen(cp_command)
+
+
+def get_dir_desc(dir_path_abs):
+    '''get a repo/directory description text
+
+if present use the description file
+if not present use the title from the first markdown file
+fallback to text
+'''
+    # try description file
+    desc_filepath = os.path.join(dir_path_abs, config.REPO_DESC_FILENAME)
+
+    if os.path.isfile(desc_filepath):
+        with open(desc_filepath, 'r') as f:
+            desc = f.read()
+        return desc
+
+    # try the first md file
+    files = os.listdir(dir_path_abs)
+
+    first_md_file = ""
+    for file in sorted(files):
+        if file.endswith(config.MD_EXT):
+            first_md_file = file
+            break
+
+    if first_md_file == "":
+        return "<pre>No description (markdown file) available, yet...</pre>"
+
+    md_filepath_abs = os.path.join(dir_path_abs, first_md_file)
+
+    desc = get_title(md_filepath_abs)
+
+    if desc == "":
+        return "<pre>No description (page title) available...</pre>"
+
+    return desc
