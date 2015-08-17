@@ -71,6 +71,11 @@ add md files to HTML list'''
         link_href = os.path.join(href_path_pre, filename)
 
         link_text = get_title(os.path.join(dir_path_abs, filename_md))
+        # (use filename as fallback)
+        if link_text == '' and 'filename_noext' in locals():
+            link_text = filename_noext
+        elif link_text == '':
+            link_text = os.path.splitext(filename_md)[0]
 
         list_html = list_html + '<li><a {} href="{}">{}</a></li>\n'.format(link_class, link_href, link_text)
 
@@ -87,7 +92,7 @@ add subdirectories with descriptions to HTML list'''
     for subdir in subdirs:
         link_href = os.path.join(href_path_pre, subdir)
 
-        list_html = list_html + '<li><a {} href="{}">{}</a><br />\n'.format(link_class, link_href, subdir)
+        list_html = list_html + '<li><a {} href="{}">{}</a><br />\n'.format(link_class, link_href, subdir+'/')
 
         desc = get_dir_desc(os.path.join(dir_path_abs, subdir))
 
