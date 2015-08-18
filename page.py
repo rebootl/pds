@@ -4,8 +4,8 @@ import config
 from common import read_tb_and_content, pandoc_pipe, write_out, read_file
 from plugin_handler import get_cdata, plugin_cdata_handler, back_substitute
 #from menu import generate_base_menu, generate_repos_menu
-from nav_prim import gen_primary_nav
-from nav_dir import gen_dir_nav
+from nav_prim import gen_nav_primary
+from nav_dir import gen_nav_dirlist, gen_nav_path
 from repo_list import gen_repo_list
 
 class Page:
@@ -44,9 +44,10 @@ HTML    <inst>.page_html
         self.process_plugin_content()
 
         # navigation
-        self.primary_nav = gen_primary_nav(self.branch, self.filepath_md)
+        self.nav_primary = gen_nav_primary(self.branch, self.filepath_md)
 #       self.secondary_nav = secondary_nav(self.branch, self.repo_name, self.filepath_md)
-        self.dir_nav = gen_dir_nav(self.branch, self.repo_name, self.subpath, self.filepath_md)
+        self.nav_dir = gen_nav_dirlist(self.branch, self.repo_name, self.subpath, self.filepath_md)
+        self.nav_path = gen_nav_path(self.branch, self.repo_name, self.subpath, self.filepath_md)
 
         # set repository list on main page
         if self.repo_name == config.BASE_REPO_NAME and self.idx == 0 and self.subpath == "":
@@ -116,7 +117,7 @@ Sets:
             self.pandoc_opts.append('--section-divs')
 
         # include navigation
-        self.pandoc_opts.append('--variable=primary-nav:'+self.primary_nav)
+        self.pandoc_opts.append('--variable=primary-nav:'+self.nav_primary)
 #        self.pandoc_opts.append('--variable=secondary-nav:'+self.secondary_nav)
 #        self.pandoc_opts.append('--variable=custom-nav:'+self.custom_nav)
 
@@ -125,6 +126,9 @@ Sets:
             self.pandoc_opts.append('--variable=repo-list:'+self.repo_list)
 
         # add directory navigation
-        self.pandoc_opts.append('--variable=dir-nav:'+self.dir_nav)
+        self.pandoc_opts.append('--variable=dir-nav:'+self.nav_dir)
+
+        # add navigation path
+        self.pandoc_opts.append('--variable=nav_path:'+self.nav_path)
 
         # ... add more opts here ...

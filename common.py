@@ -55,7 +55,10 @@ def read_tb_lines(filepath_md, line_numbers=[0]):
 
 
 def get_title(filepath_md):
-    '''Get the page title as link text, returning the filename as fallback.'''
+    '''Get the page title as link text, returning the filename as fallback[^1].
+
+[^1]: currently this is commented, why ?
+'''
 
     tb_title_list = read_tb_lines(filepath_md, [0])
     if tb_title_list == []:

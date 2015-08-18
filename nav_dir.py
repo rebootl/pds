@@ -1,4 +1,9 @@
-'''directory navigation generation'''
+'''directory navigation generation
+
+shall be placed on every page, exept base-layout pages
+(on my site it doesn't make sense on base-layout pages,
+but it could be used there as well)
+'''
 
 import os
 
@@ -7,17 +12,49 @@ import config
 from common import get_title, get_dir_desc
 #from menu import Menu
 
-def gen_dir_nav(branch, repo_name, subpath, active_path):
-    '''generate a navigation for the current directory content,
+def gen_nav_path(branch, repo_name, subpath, active_path):
+    '''generate a navigation path
 
-containing:
-- a navigation / navigation bar (?)
+<current_repo> / <active_subdirs>
+'''
+    link_html = '<a class="Directory" href="{}">{}</a>'
+
+    if repo_name == config.BASE_REPO_NAME:
+        href_path_pre = os.path.join('/', branch, subpath)
+    else:
+        href_path_pre = os.path.join('/', branch, repo_name, subpath)
+
+    # generate path items
+    path_items = [ repo_name ]
+    path = subpath
+    while True:
+        path, subdir = os.path.split(path)
+        if subdir != '':
+            path_items.append(subdir)
+        elif path == '': break
+
+    # (debug print)
+    print("path items: ", path_items)
+
+    if repo_name == config.BASE_REPO_NAME:
+        path_items = path_items[1:]
+
+    nav_path = ''
+    for idx, item in enumerate(path_items):
+        href_path = os.path.join((len(path_items)-idx) * '../', item)
+
+        nav_path = nav_path + '<a class="Directory" href="{}">{}</a>'.format(href_path, item) + ' / '
+
+    print("nav path: ", nav_path)
+
+    return nav_path
+
+
+def gen_nav_dirlist(branch, repo_name, subpath, active_path):
+    '''generate a of the current directory content,
+
 - markdown files
 - subdirectories
-
-shall be placed on every page, exept base-layout pages
-(on my site it doesn't make sense on base-layout pages,
-but it could be used there as well)
 '''
     # start list
     menu = '<ul>\n'

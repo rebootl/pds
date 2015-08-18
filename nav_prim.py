@@ -7,7 +7,7 @@ import config
 from common import get_title, get_dir_desc
 #from menu import Menu
 
-def gen_primary_nav(branch, active_path):
+def gen_nav_primary(branch, active_path):
     '''generate the primary navigation
 
 using the main items of the base-layout:
