@@ -50,45 +50,61 @@ def gen_nav_path(branch, repo_name, subpath, active_path):
     return nav_path
 
 
-def gen_nav_dirlist(branch, repo_name, subpath, active_path):
-    '''generate a of the current directory content,
-
-- markdown files
-- subdirectories
+def gen_nav_pagelist(branch, repo_name, subpath, active_path):
+    '''generate HTML list of the pages (markdown files) in the current directory
 '''
-    # start list
-    menu = '<ul>\n'
-
     # get directory content
     dir_path_abs = os.path.join(config.GIT_WD, repo_name, subpath)
-
     dir_content = os.listdir(dir_path_abs)
 
-    # get markdown files and subdirectories
+    # filter markdown files (pages)
     md_files = []
-    subdirs = []
     for file in sorted(dir_content):
-        filepath_abs = os.path.join(dir_path_abs, file)
         if file.endswith(config.MD_EXT):
             md_files.append(file)
-        elif os.path.isdir(filepath_abs) and file not in config.EXCLUDE_DIRS:
-            subdirs.append(file)
 
+    # set correct path
     if repo_name == config.BASE_REPO_NAME:
         href_path_pre = os.path.join('/', branch, subpath)
     else:
         href_path_pre = os.path.join('/', branch, repo_name, subpath)
 
-    # add markdown files
-    menu = menu + add_md_files(dir_path_abs, href_path_pre, md_files)
+    # add pages (markdown files)
+    menu_pages = add_md_files(dir_path_abs, href_path_pre, md_files)
+
+    # add list tags
+    menu_pages = '<ul>\n' + menu_pages + '</ul>\n'
+
+    return menu_pages
+
+
+def gen_nav_dirlist(branch, repo_name, subpath, active_path):
+    '''generate HTML list of the subdirectories in the current directory
+'''
+    # get directory content
+    dir_path_abs = os.path.join(config.GIT_WD, repo_name, subpath)
+    dir_content = os.listdir(dir_path_abs)
+
+    # filter subdirectories
+    subdirs = []
+    for file in sorted(dir_content):
+        filepath_abs = os.path.join(dir_path_abs, file)
+        if os.path.isdir(filepath_abs) and file not in config.EXCLUDE_DIRS:
+            subdirs.append(file)
+
+    # set correct path
+    if repo_name == config.BASE_REPO_NAME:
+        href_path_pre = os.path.join('/', branch, subpath)
+    else:
+        href_path_pre = os.path.join('/', branch, repo_name, subpath)
 
     # add subdirectories with description
-    menu = menu + add_subdirs(dir_path_abs, href_path_pre, subdirs)
+    menu_dirs = add_subdirs(dir_path_abs, href_path_pre, subdirs)
 
-    # end menu
-    menu = menu + '</ul>\n'
+    # add list tags
+    menu_dirs = '<ul>\n' + menu_dirs + '</ul>\n'
 
-    return menu
+    return menu_dirs
 
 
 def add_md_files(dir_path_abs, href_path_pre, md_files):
