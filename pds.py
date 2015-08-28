@@ -43,7 +43,7 @@ def main(branches=config.DEF_BRANCHES):
 
 
 
-main([ "public" ])
+main([ "public", "preview" ])
 
 
 

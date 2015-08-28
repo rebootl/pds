@@ -42,7 +42,7 @@ EXCLUDE_DIRS = [ ".git" ]
 MENU_EXCLUDE_FILES_MD = [ "impressum" ]
 
 # custom navigation: filename of an optional repo description file
-REPO_DESC_FILENAME = "repo.desc"
+REPO_DESC_FILENAME = "dir.shortdesc"
 
 # Pandoc HTML type
 # (==> default to html5)

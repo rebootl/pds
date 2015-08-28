@@ -43,7 +43,10 @@ def read_tb_lines(filepath_md, line_numbers=[0]):
     tb_lines=[]
     with open(filepath_md, 'r') as f_op:
         for line_num in line_numbers:
-            tb_lines.append(f_op.readlines()[line_num])
+            try:
+                tb_lines.append(f_op.readlines()[line_num])
+            except IndexError:
+                pass
 
     values=[]
     for tb_line in tb_lines:

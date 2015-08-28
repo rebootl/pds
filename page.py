@@ -26,6 +26,8 @@ HTML    <inst>.page_html
         self.idx = idx
 
         self.repo_list = ""
+        self.nav_path = ""
+        self.nav_dirlist = ""
 
         # construct md filepath
         self.filepath_md = os.path.join(config.GIT_WD, self.repo_name, self.subpath, self.filename_md)
@@ -55,9 +57,10 @@ HTML    <inst>.page_html
             # (debug print)
             print("Placed repo list.")
 
-        # add path and directory list
-        self.nav_path = gen_nav_path(self.branch, self.repo_name, self.subpath, self.filepath_md)
-        self.nav_dirlist = gen_nav_dirlist(self.branch, self.repo_name, self.subpath, self.filepath_md)
+        # add path and directory list (not on main page)
+        if self.repo_name != config.BASE_REPO_NAME:
+            self.nav_path = gen_nav_path(self.branch, self.repo_name, self.subpath, self.filepath_md)
+            self.nav_dirlist = gen_nav_dirlist(self.branch, self.repo_name, self.subpath, self.filepath_md)
 
         # prepare pandoc opts
         self.prepare_pandoc()
@@ -129,11 +132,14 @@ Sets:
         if self.repo_list != "":
             self.pandoc_opts.append('--variable=repo-list:'+self.repo_list)
 
-        # add directory lists
-        self.pandoc_opts.append('--variable=nav-pagelist:'+self.nav_pagelist)
-        self.pandoc_opts.append('--variable=nav-dirlist:'+self.nav_dirlist)
+        # add page list
+        if self.nav_pagelist != "":
+            self.pandoc_opts.append('--variable=nav-pagelist:'+self.nav_pagelist)
 
-        # add navigation path
-        self.pandoc_opts.append('--variable=nav-path:'+self.nav_path)
+        # add path / directory lists (not on main page)
+        if self.nav_path != "":
+            self.pandoc_opts.append('--variable=nav-path:'+self.nav_path)
+        if self.nav_dirlist != "":
+            self.pandoc_opts.append('--variable=nav-dirlist:'+self.nav_dirlist)
 
         # ... add more opts here ...

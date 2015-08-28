@@ -63,6 +63,10 @@ def gen_nav_pagelist(branch, repo_name, subpath, active_path):
         if file.endswith(config.MD_EXT):
             md_files.append(file)
 
+    # return empty if only one item
+    if len(md_files) < 2:
+        return ""
+
     # set correct path
     if repo_name == config.BASE_REPO_NAME:
         href_path_pre = os.path.join('/', branch, subpath)
