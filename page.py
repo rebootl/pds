@@ -3,7 +3,6 @@ import config
 
 from common import read_tb_and_content, pandoc_pipe, write_out, read_file
 from plugin_handler import get_cdata, plugin_cdata_handler, back_substitute
-#from menu import generate_base_menu, generate_repos_menu
 from nav_prim import gen_nav_primary
 from nav_dir import gen_nav_pagelist, gen_nav_dirlist, gen_nav_path
 from repo_list import gen_repo_list
@@ -114,6 +113,10 @@ Sets:
         # set the title block opts
         for index, tb_value in enumerate(self.tb_values):
             self.pandoc_opts.append('--variable='+config.TB_LINES[index]+':'+tb_value)
+
+        # don't put title on first base layout pages
+        if self.repo_name == config.BASE_REPO_NAME and self.idx == 0:
+            self.pandoc_opts.append('--variable=title:')
 
         # include a table of content
         self.pandoc_opts.append('--toc')
