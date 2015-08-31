@@ -10,7 +10,6 @@ import os
 import config
 
 from common import get_title, get_dir_desc
-#from menu import Menu
 
 def gen_nav_path(branch, repo_name, subpath, active_path):
     '''generate a navigation path
@@ -33,9 +32,6 @@ def gen_nav_path(branch, repo_name, subpath, active_path):
             path_items.append(subdir)
         elif path == '': break
 
-    # (debug print)
-    print("path items: ", path_items)
-
     if repo_name == config.BASE_REPO_NAME:
         path_items = path_items[1:]
 
@@ -44,8 +40,6 @@ def gen_nav_path(branch, repo_name, subpath, active_path):
         href_path = os.path.join((len(path_items)-idx) * '../', item)
 
         nav_path = nav_path + '<a class="Directory" href="{}">{}</a>'.format(href_path, item) + ' / '
-
-    print("nav path: ", nav_path)
 
     return nav_path
 

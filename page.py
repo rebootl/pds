@@ -57,7 +57,7 @@ HTML    <inst>.page_html
         if self.repo_name == config.BASE_REPO_NAME and self.idx == 0 and self.subpath == "":
             self.repo_list = gen_repo_list(self.branch)
             # (debug print)
-            print("Placed repo list.")
+            print("pds: (Placed repo list.)")
 
         # add path and directory list (not on main page)
         if self.repo_name != config.BASE_REPO_NAME:

@@ -13,16 +13,19 @@ from common import git_cmd
 def checkout_all_repos(branch):
 
     # (get the cloned repos)
-    repos_list=os.listdir(config.GIT_WD)
+    repos_list = os.listdir(config.GIT_WD)
 
-    has_branch_repo_list=[]
+    has_branch_repo_list = []
 
-    oldwd=os.getcwd()
+    oldwd = os.getcwd()
     for repo in repos_list:
         os.chdir( os.path.join(config.GIT_WD, repo) )
         # (checkout)
         # --> evtl. make this nicer e.g. check if branch exists
-        ret=git_cmd("checkout", [ branch ])
+        # (info print)
+        print('pds: repo: "{}"'.format(repo))
+
+        ret = git_cmd("checkout", [ branch ])
         if ret == 0:
             # (add to return list)
             has_branch_repo_list.append(repo)
@@ -32,6 +35,8 @@ def checkout_all_repos(branch):
 
         # (update the branch)
         # --> evtl. also make this nicer e.g. check if up-to-date
+        # (info print)
+        #print("pds: update repo: ", repo)
         git_cmd("pull")
 
     os.chdir(oldwd)

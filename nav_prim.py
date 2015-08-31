@@ -41,9 +41,6 @@ add the site index.html to HTML list
     # link to site index.html
     index_href = os.path.join('/', branch)
 
-    # (debug print)
-    print("active_path: ", active_path)
-
     # get the link text from markdown title
     dir = os.path.join(config.GIT_WD, config.BASE_REPO_NAME)
 
