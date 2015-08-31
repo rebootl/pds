@@ -45,10 +45,15 @@ def process_dir_recurse(repo_name, branch, subpath=""):
             subdirs_list.remove(excl_dir)
 
     # set out dir
-    if repo_name == config.BASE_REPO_NAME:
-        out_dir=os.path.join(config.PUBLISH_DIR, branch, subpath)
+    if branch == config.MAIN_BRANCH:
+        pre_dir = config.PUBLISH_DIR
     else:
-        out_dir=os.path.join(config.PUBLISH_DIR, branch, repo_name, subpath)
+        pre_dir = os.path.join(config.PUBLISH_DIR, branch)
+
+    if repo_name == config.BASE_REPO_NAME:
+        out_dir = os.path.join(pre_dir, subpath)
+    else:
+        out_dir = os.path.join(pre_dir, repo_name, subpath)
 
     # process dir content
     # (markdown files)

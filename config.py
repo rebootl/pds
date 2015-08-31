@@ -10,6 +10,11 @@
 # the branches to process
 DEF_BRANCHES = [ "public", "private", "preview" ]
 
+# the main branch
+# this branch is published directly in the publish directory
+# all other branches receive respective subdirectories
+MAIN_BRANCH = "public"
+
 # the repository path
 REPO_DIR = "/home/cem/website2/repos"
 

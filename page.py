@@ -19,7 +19,10 @@ HTML    <inst>.page_html
 
     def __init__(self, branch, repo_name, subpath, filename_md, idx):
         self.repo_name = repo_name
-        self.branch = branch
+        if branch == config.MAIN_BRANCH:
+            self.branch = ""
+        else:
+            self.branch = branch
         self.subpath = subpath
         self.filename_md = filename_md
         self.idx = idx
@@ -108,7 +111,9 @@ Sets:
         self.pandoc_opts.append('--template='+config.HTML_TEMPLATE)
 
         # include the current branch
-        self.pandoc_opts.append('--variable=branch:'+self.branch)
+        # (the check is probably not needed, pandoc may do this as well)
+        if self.branch != "":
+            self.pandoc_opts.append('--variable=branch:'+self.branch)
 
         # set the title block opts
         for index, tb_value in enumerate(self.tb_values):
