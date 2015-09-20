@@ -140,7 +140,8 @@ add subdirectories with descriptions to HTML list'''
     list_html = ''
     # (don't set active class for now)
     link_class = ''
-    for subdir in subdirs:
+    # (reverse the list, "newest" first)
+    for subdir in reversed(subdirs):
         link_href = os.path.join(href_path_pre, subdir)
 
         list_html = list_html + '<li><a {} href="{}">{}</a><br />\n'.format(link_class, link_href, subdir+'/')

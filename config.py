@@ -32,7 +32,7 @@ TB_LINES = ['title', 'author', 'date']
 HTML_TEMPLATE = "/home/cem/website2/templates/html5.html"
 
 # exclude directories from processing
-EXCLUDE_DIRS = [ ".git" ]
+EXCLUDE_DIRS = [ ".git", "localfont" ]
 
 
 
