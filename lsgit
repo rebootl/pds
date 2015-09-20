@@ -1,0 +1,125 @@
+#!/usr/bin/python
+#
+# helper to show file status
+#
+#
+
+import os
+import subprocess
+
+
+def git_ls_untracked():
+    '''list of all untracked files'''
+    action = 'ls-files'
+    opts = [ '--others', '--exclude-standard', '--directory' ]
+    git_cmd=[ "git", action ] + opts
+
+    proc = subprocess.Popen(git_cmd, stdout=subprocess.PIPE)
+    stdout, stderr = proc.communicate()
+
+    out = stdout.decode()
+    lines = out.splitlines()
+
+    # remove trailing slashes
+    for i, line in enumerate(lines):
+        if line.endswith('/'):
+            lines[i] = line[:-1]
+
+    #print(lines)
+    return lines
+
+
+class TCol:
+    violet = '\033[95m'
+    blue = '\033[94m'
+    green = '\033[92m'
+    yellow = '\033[93m'
+    red = '\033[91m'
+    bold = '\033[1m'
+    underline = '\033[4m'
+    end = '\033[0m'
+
+    cyan = '\033[96m'
+    white = '\033[97m'
+    grey = '\033[98m'
+    darkgrey = '\033[90m'
+
+
+def dircheck(ignores, untrackes):
+
+    # get directory content
+    dir_content = os.listdir()
+    dir_content.sort()
+
+    # assemble output
+    tracked = []
+    ignored = []
+    untracked = []
+    for file in dir_content:
+        if file in ignores:
+            ignored.append(file)
+        elif file in untrackes:
+            untracked.append(file)
+        else:
+            tracked.append(file)
+
+    # printout
+
+    for file in tracked:
+        if file == '.git' and os.path.isdir(file):
+            print(TCol.yellow + TCol.bold + '.git' + TCol.end)
+        elif os.path.isdir(file):
+            print(TCol.blue + TCol.bold + file + TCol.end)
+        else:
+            print(file)
+    print()
+
+    for file in ignored:
+        if os.path.isdir(file):
+            print(TCol.darkgrey + TCol.bold + file + TCol.end)
+        else:
+            print(TCol.darkgrey + file + TCol.end)
+    print()
+
+    for file in untracked:
+        if os.path.isdir(file):
+            print(TCol.red + TCol.bold + file + TCol.end)
+        else:
+            print(TCol.red + file + TCol.end)
+    print()
+
+
+def read_gitignore():
+
+    if not os.path.isfile('.gitignore'):
+        return []
+
+    with open('.gitignore', 'r') as f:
+        lines = f.read().splitlines()
+
+    # remove comments and empty lines
+    removes = []
+    for line in lines:
+        if line.startswith('#'):
+            removes.append(line)
+        elif line == "":
+            removes.append(line)
+
+    for remove in removes:
+        lines.remove(remove)
+
+    # discard path elements
+    for i, line in enumerate(lines):
+        # remove leading slashes
+        if line.startswith('/'):
+            lines[i] = line[1:]
+        # remove trailing slashes
+        if line.endswith('/'):
+            lines[i] = line[:-1]
+
+    return lines
+
+
+untracked = git_ls_untracked()
+ignores = read_gitignore()
+dircheck(ignores, untracked)
