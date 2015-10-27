@@ -10,38 +10,38 @@ import config
 from common import git_cmd
 
 
-def checkout_all_repos(branch):
-
-    # (get the cloned repos)
-    repos_list = os.listdir(config.GIT_WD)
-
-    has_branch_repo_list = []
-
-    oldwd = os.getcwd()
-    for repo in repos_list:
-        os.chdir( os.path.join(config.GIT_WD, repo) )
-        # (checkout)
-        # --> evtl. make this nicer e.g. check if branch exists
-        # (info print)
-        print('pds: repo: "{}"'.format(repo))
-
-        ret = git_cmd("checkout", [ branch ])
-        if ret == 0:
-            # (add to return list)
-            has_branch_repo_list.append(repo)
-        else:
-            print('pds: repo "{}" has no branch "{}"'.format(repo, branch))
-            continue
-
-        # (update the branch)
-        # --> evtl. also make this nicer e.g. check if up-to-date
-        # (info print)
-        #print("pds: update repo: ", repo)
-        git_cmd("pull")
-
-    os.chdir(oldwd)
-
-    return has_branch_repo_list
+#def checkout_all_repos(branch):
+#
+#    # (get the cloned repos)
+#    repos_list = os.listdir(config.GIT_WD)
+#
+#    has_branch_repo_list = []
+#
+#    oldwd = os.getcwd()
+#    for repo in repos_list:
+#        os.chdir( os.path.join(config.GIT_WD, repo) )
+#        # (checkout)
+#        # --> evtl. make this nicer e.g. check if branch exists
+#        # (info print)
+#        print('pds: repo: "{}"'.format(repo))
+#
+#        ret = git_cmd("checkout", [ branch ])
+#        if ret == 0:
+#            # (add to return list)
+#            has_branch_repo_list.append(repo)
+#        else:
+#            print('pds: repo "{}" has no branch "{}"'.format(repo, branch))
+#            continue
+#
+#        # (update the branch)
+#        # --> evtl. also make this nicer e.g. check if up-to-date
+#        # (info print)
+#        #print("pds: update repo: ", repo)
+#        git_cmd("pull")
+#
+#    os.chdir(oldwd)
+#
+#    return has_branch_repo_list
 
 
 def clone_all_repos():

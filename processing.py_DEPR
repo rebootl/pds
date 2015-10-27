@@ -11,6 +11,9 @@ from common import write_out, copy_file
 from page import Page
 
 
+
+
+
 def process_dir_recurse(repo_name, branch, subpath=""):
 
     dir = os.path.join(config.GIT_WD, repo_name, subpath)
@@ -45,39 +48,43 @@ def process_dir_recurse(repo_name, branch, subpath=""):
             subdirs_list.remove(excl_dir)
 
     # set out dir
-    if branch == config.MAIN_BRANCH:
-        pre_dir = config.PUBLISH_DIR
-    else:
-        pre_dir = os.path.join(config.PUBLISH_DIR, branch)
-
-    if repo_name == config.BASE_REPO_NAME:
-        out_dir = os.path.join(pre_dir, subpath)
-    else:
-        out_dir = os.path.join(pre_dir, repo_name, subpath)
+# [re1] ==> do in Page ? --> mv this
+#    if branch == config.MAIN_BRANCH:
+#        pre_dir = config.PUBLISH_DIR
+#    else:
+#        pre_dir = os.path.join(config.PUBLISH_DIR, branch)
+#
+#    if repo_name == config.BASE_REPO_NAME:
+#        out_dir = os.path.join(pre_dir, subpath)
+#    else:
+#        out_dir = os.path.join(pre_dir, repo_name, subpath)
 
     # process dir content
     # (markdown files)
-    for idx, filename_md in enumerate(sorted(md_files_list)):
+    for page_num, filename_md in enumerate(sorted(md_files_list)):
 
         # generate instance
-        page_inst = Page(branch, repo_name, subpath, filename_md, idx)
+        # (will load markdown and metadata i.e. title block)
+        page_inst = Page(branch, repo_name, subpath, filename_md, page_num)
 
         # set out filename
-        if idx == 0:
-            out_filename = "index.html"
-        else:
-            out_filename = os.path.splitext(filename_md)[0]+".html"
-
-        # set out path
-        out_filepath = os.path.join(out_dir, out_filename)
-
-        # write out
-        write_out(page_inst.page_html, out_filepath)
+# [re1] ==> do in Page
+#        if idx == 0:
+#            out_filename = "index.html"
+#        else:
+#            out_filename = os.path.splitext(filename_md)[0]+".html"
+#
+#        # set out path
+#        out_filepath = os.path.join(out_dir, out_filename)
+#
+#        # write out
+#        write_out(page_inst.page_html, out_filepath)
 
     # copy remaining files
+    # (using the last instance out_dir)
     for file in other_files:
         in_filepath = os.path.join(dir, file)
-        copy_file(in_filepath, out_dir)
+        copy_file(in_filepath, page_inst.out_dir)
 
     # recurse
     for subdir in subdirs_list:

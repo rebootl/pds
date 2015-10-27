@@ -23,14 +23,16 @@ from plugins.insert_file.insert_file import insert_file
 from plugins.gallery.gallery import gallery
 from plugins.tree.tree import tree
 from plugins.metapost.metapost import metapost, metapost_ext
-from plugins.repos_list.repos_list import repos_list
+#from plugins.repos_list.repos_list import repos_list
+from plugins.repo_list.repo_list import repo_list
 
 # Settings
 # --> Pandoc adds newlines into the div now...
 # (My way of substitution is simple but it seems also fragile...)
 # ==> adding newlines here to fix it, quick but still ugly...
 # --> maybe use some sort of python temporary filename
-PLUGIN_PLACEHOLDER='<div id="placeholder">\nSomething\n</div>'
+PLUGIN_PLACEHOLDER='<div id="placeholder">\n<p>\nSomething\n</p>\n</div>'
+#PLUGIN_PLACEHOLDER='d8a2cabb38c68700bdef0112a5f2a35e'
 
 # Functions
 
@@ -75,8 +77,8 @@ def plugin_cdata_handler(branch, subdir, cdata_blocks):
         elif plugin_name=='FIG_EXT':
             plugin_out, pdf_out = metapost_ext(subdir, plugin_in)
 
-        elif plugin_name == 'REPOS_LIST':
-            plugin_out, pdf_out = repos_list(branch)
+        elif plugin_name == 'REPO_LIST':
+            plugin_out, pdf_out = repo_list(branch)
         #elif plugin_name=' ... ':
         #	plugin_out, pdf_out = plugins. .. (plugin_content)
 

@@ -1,0 +1,51 @@
+'''repository list generation'''
+
+import os
+
+import config
+
+#from menu import Menu
+from common import get_title, get_dir_desc
+
+def repo_list(branch):
+    '''generate a list of repositories with descriptions'''
+
+    # get the repos from git-wd
+#    repos_list=os.listdir(config.GIT_WD)
+    repos_list = branch.repos
+
+    # filter out base-repo
+    for repo in repos_list:
+        if repo.name == config.BASE_REPO_NAME:
+            repos_list.remove(repo)
+
+    # return if empty
+    if repos_list == []:
+        return "<pre>No other repositories found yet...</pre>"
+
+    menu='<nav class="navlist" id="repos">\n<h3>Repositories</h3>\n<ul>\n'
+#    menu=menu+'<li>Repositories</li>\n'
+
+    # add an item for every repo
+    # (currently these do not receive an active class,
+    #  but a description from desc-repo)
+    # change: use dir name as title and markdown title as description
+    for repo in repos_list:
+
+        # (these links go to the repo/index.html)
+        link_src = os.path.join('/', branch.name, repo.name, "index.html")
+
+        link_text = repo.name
+
+        desc = get_dir_desc(os.path.join(config.GIT_WD, repo.name))
+
+        if desc != "":
+            link_desc = '<br />' + desc
+        else:
+            link_desc = ""
+
+        menu = menu + '<li><a href="{}">{}</a>{}</li>\n'.format(link_src, link_text, link_desc)
+
+    menu = menu + '</ul>\n</nav>\n'
+
+    return menu, menu
