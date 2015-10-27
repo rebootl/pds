@@ -23,7 +23,7 @@ def repo_list(branch):
     if repos_list == []:
         return "<pre>No other repositories found yet...</pre>"
 
-    menu='<nav class="navlist" id="repos">\n<h3>Repositories</h3>\n<ul>\n'
+    menu='<ul>\n'
 #    menu=menu+'<li>Repositories</li>\n'
 
     # add an item for every repo
@@ -46,6 +46,6 @@ def repo_list(branch):
 
         menu = menu + '<li><a href="{}">{}</a>{}</li>\n'.format(link_src, link_text, link_desc)
 
-    menu = menu + '</ul>\n</nav>\n'
+    menu = menu + '</ul>\n'
 
-    return menu, menu
+    return "", "", [ '--variable=repo-list:'+menu ]

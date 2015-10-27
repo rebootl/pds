@@ -7,22 +7,13 @@ from common import read_tb_and_content, pandoc_pipe, write_out
 from plugin_handler import get_cdata, plugin_cdata_handler, back_substitute
 from nav_prim import gen_nav_primary
 from nav_dir import gen_nav_pagelist, gen_nav_dirlist, gen_nav_path
-#from repo_list import gen_repo_list
 
 class Page:
-    '''Page, processing.
-
-Retrieve output:
-HTML    <inst>.page_html
-'''
-
-    # instance counter
-    #inst_count=0
 
     def __init__(self, branch, repo, subpath, filename_md, page_num):
-
         self.branch = branch
-
+        # the main branch shall not go in a subdirectory
+        # therefor setting to "" here
         if branch.name == config.MAIN_BRANCH:
             self.branch_name = ""
         else:
@@ -34,10 +25,10 @@ HTML    <inst>.page_html
         self.page_num = page_num
 
         # markdown (input) filepath
-        self.filepath_md = os.path.join(config.GIT_WD,
-                                        self.repo_name,
-                                        self.subpath,
-                                        self.filename_md)
+        self.filepath_md = os.path.join( config.GIT_WD,
+                                         self.repo_name,
+                                         self.subpath,
+                                         self.filename_md )
 
         # set out dir
         if self.repo_name == config.BASE_REPO_NAME:
@@ -57,32 +48,27 @@ HTML    <inst>.page_html
         # out path
         self.out_filepath = os.path.join(self.out_dir, self.out_filename)
 
-# [re1] ==> unneeded when doing repo_list as plugin
-#        self.repo_list = ""
-
         # navigation
         self.nav_path = ""
         self.nav_dirlist = ""
-
-        # call process right away
-# [re1] ==> don't ! (only load first)
-#        self.process()
 
         # load markdown and title block
         self.tb_values, \
         self.page_body_md = read_tb_and_content(self.filepath_md, 
                                              config.TB_LINES)
-
         self.meta_title = self.tb_values[0]
         self.meta_author = self.tb_values[1]
         self.meta_date = self.tb_values[2]
 
-# [re1] ==> what for?
-#        Page.inst_count += 1
-
     def process(self):
 
         # substitute and process plugin content
+        # sets:
+        # - self.page_body_subst
+        # - self.cdata_blocks
+        # - self.plugin_blocks
+        # - self.plugin_blocks_pdf
+        # - self.plugin_pandoc_opts
         self.process_plugin_content()
 
         # primary navigation
@@ -94,13 +80,6 @@ HTML    <inst>.page_html
                                               self.repo_name,
                                               self.subpath,
                                               self.filepath_md )
-
-        # set repository list on main page
-# [re1] ==> do this w/ plugin
-#        if self.repo_name == config.BASE_REPO_NAME and self.idx == 0 and self.subpath == "":
-#            self.repo_list = gen_repo_list(self.branch)
-#            # (debug print)
-#            print("pds: (Placed repo list.)")
 
         # add path and directory list (not on base repo)
         if self.repo_name != config.BASE_REPO_NAME:
@@ -129,36 +108,29 @@ HTML    <inst>.page_html
             self.page_html = self.page_html_subst
 
     def process_plugin_content(self):
-        '''Process plugin content.
-Sets:
-- self.page_body_subst
-- self.cdata_blocks
-- self.plugin_blocks
-- self.plugin_blocks_pdf
-'''
-        # --> allow plugins to return pandoc variables
-
         # plugin substitution
         self.page_body_subst, \
         self.cdata_blocks = get_cdata(self.page_body_md)
 
         # process the plug-in content
         if self.cdata_blocks != []:
-            # --> self.subpath correct ?
-            #print("self.subpath: ", self.subpath)
             self.plugin_blocks, \
-            self.plugin_blocks_pdf = plugin_cdata_handler(self.branch,
-                                                          self.subpath,
-                                                          self.cdata_blocks)
-
+            self.plugin_blocks_pdf, \
+            self.plugin_pandoc_opts = plugin_cdata_handler(self.branch,
+                                                             self.subpath,
+                                                             self.cdata_blocks)
         else:
             self.plugin_blocks = []
             self.plugin_blocks_pdf = []
+            self.plugin_pandoc_opts = []
 
     def prepare_pandoc(self):
         '''Collect the Pandoc options.'''
-
         self.pandoc_opts = []
+
+        # set plugin opts
+        for opt in self.plugin_pandoc_opts:
+            self.pandoc_opts.append(opt)
 
         # set the out format
         self.pandoc_opts.append('--to=html5')
@@ -189,11 +161,6 @@ Sets:
 
         # include navigation
         self.pandoc_opts.append('--variable=nav-primary:'+self.nav_primary)
-
-        # set repository list on main page
-# [re1] ==> do this in plugin
-#        if self.repo_list != "":
-#            self.pandoc_opts.append('--variable=repo-list:'+self.repo_list)
 
         # add page list
         if self.nav_pagelist != "":

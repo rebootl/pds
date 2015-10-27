@@ -1,29 +1,13 @@
-'''module of new_simple_cms
+'''plugin handling functions'''
 
-Plugin handling functions.
-'''
-# This file is part of new_simple_cms
-#--------------------------------------------------------------------------------
-#
-# Copyright 2013 Cem Aydin
-#
-#--------------------------------------------------------------------------------
-# See new_simple_cms.py for more information.
-
-# Imports
-#
-# python
 import re
 
-# global config variables
 import config
 
-# plugins
 from plugins.insert_file.insert_file import insert_file
 from plugins.gallery.gallery import gallery
 from plugins.tree.tree import tree
 from plugins.metapost.metapost import metapost, metapost_ext
-#from plugins.repos_list.repos_list import repos_list
 from plugins.repo_list.repo_list import repo_list
 
 # Settings
@@ -31,54 +15,43 @@ from plugins.repo_list.repo_list import repo_list
 # (My way of substitution is simple but it seems also fragile...)
 # ==> adding newlines here to fix it, quick but still ugly...
 # --> maybe use some sort of python temporary filename
-PLUGIN_PLACEHOLDER='<div id="placeholder">\n<p>\nSomething\n</p>\n</div>'
+PLUGIN_PLACEHOLDER = '<div id="placeholder">\n<p>\nSomething\n</p>\n</div>'
 #PLUGIN_PLACEHOLDER='d8a2cabb38c68700bdef0112a5f2a35e'
-
-# Functions
 
 def plugin_cdata_handler(branch, subdir, cdata_blocks):
     '''Receive the cdata blocks and forward them to the appropriate plugin.'''
-    #
-    #
     plugin_blocks = []
     plugin_blocks_pdf = []
-    for block in cdata_blocks:
-        # extract plugin name and content from cdata block
-        #block_split=block.split('[')
-        #plugin_name=block_split[1]
-        #
-        #plugin_rest=''.join(block_split[2:])
-        #plugin_rest_split=plugin_rest.split(']')
-        #
-        #plugin_in=plugin_rest_split[0]
+    plugin_pandoc_opts = []
 
-        # --> adapting to new selector format
+    for block in cdata_blocks:
+        pandoc_opts = []
+        # extract plugin name and content from cdata block
         block_split = block.split(']')
         plugin_name = block_split[0].strip('[[').strip()
 
         plugin_in = block_split[1].strip().strip('[').strip()
 
         # here now we forward the blocks to the appropriate plugins
-        ## Each plugin needs an entry here !
-        #plugin_names=
-        if plugin_name=='INSERTFILE':
-            plugin_out, pdf_out = insert_file(subdir, plugin_in)
-            #plugin_out=plugin_content
+        # Each plugin needs an entry here !
 
-        elif plugin_name=='GALLERY':
+        if plugin_name == 'INSERTFILE':
+            plugin_out, pdf_out = insert_file(subdir, plugin_in)
+
+        elif plugin_name == 'GALLERY':
             plugin_out, pdf_out = gallery(subdir, plugin_in)
 
-        elif plugin_name=='TREE':
+        elif plugin_name == 'TREE':
             plugin_out, pdf_out = tree(subdir, plugin_in)
 
-        elif plugin_name=='FIG':
+        elif plugin_name == 'FIG':
             plugin_out, pdf_out = metapost(subdir, plugin_in)
 
-        elif plugin_name=='FIG_EXT':
+        elif plugin_name == 'FIG_EXT':
             plugin_out, pdf_out = metapost_ext(subdir, plugin_in)
 
         elif plugin_name == 'REPO_LIST':
-            plugin_out, pdf_out = repo_list(branch)
+            plugin_out, pdf_out, pandoc_opts = repo_list(branch)
         #elif plugin_name=' ... ':
         #	plugin_out, pdf_out = plugins. .. (plugin_content)
 
@@ -88,17 +61,14 @@ def plugin_cdata_handler(branch, subdir, cdata_blocks):
             plugin_out = block
             pdf_out = block
 
-        # (temporary)
-#		plugin_out = block
-#		pdf_out = block
-
         plugin_blocks.append(plugin_out)
         plugin_blocks_pdf.append(pdf_out)
+        plugin_pandoc_opts.extend(pandoc_opts)
 
     # (debug-print)
     #print("plugin blocks pdf plugin_handler: ", plugin_blocks_pdf)
 
-    return plugin_blocks, plugin_blocks_pdf
+    return plugin_blocks, plugin_blocks_pdf, plugin_pandoc_opts
 
 
 def get_cdata(text):
