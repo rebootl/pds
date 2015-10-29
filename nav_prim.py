@@ -4,7 +4,7 @@ import os
 
 import config
 
-from common import get_title, get_dir_desc
+from common import get_title
 #from menu import Menu
 
 def gen_nav_primary(branch, active_path):

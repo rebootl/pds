@@ -197,6 +197,6 @@ called from nav_prim
     desc = get_title(md_filepath_abs)
 
     if desc == "":
-        return "<pre>No description (page title) available...</pre>"
+       return "<pre>No description (page title) available...</pre>"
 
     return desc

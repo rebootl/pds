@@ -5,7 +5,7 @@ import os
 import config
 
 #from menu import Menu
-from common import get_title, get_dir_desc
+from common import get_title
 
 def repo_list(branch):
     '''generate a list of repositories with descriptions'''
@@ -37,7 +37,7 @@ def repo_list(branch):
 
         link_text = repo.name
 
-        desc = get_dir_desc(os.path.join(config.GIT_WD, repo.name))
+        desc = repo.desc
 
         if desc != "":
             link_desc = '<br />' + desc
