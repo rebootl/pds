@@ -10,47 +10,36 @@ from nav_dir import gen_nav_pagelist, gen_nav_dirlist, gen_nav_path
 
 class Page:
 
-    def __init__(self, branch, repo, subpath, filename_md, page_num):
+    def __init__(self, branch, repo, subpath, file_md):
         self.branch = branch
-        # the main branch shall not go in a subdirectory
-        # therefor setting to "" here
-        if branch.name == config.MAIN_BRANCH:
-            self.branch_name = ""
-        else:
-            self.branch_name = branch.name
         self.repo = repo
-        self.repo_name = repo.name
         self.subpath = subpath
-        self.filename_md = filename_md
-        self.page_num = page_num
+        self.file_md = file_md
 
         # markdown (input) filepath
-        self.filepath_md = os.path.join( config.GIT_WD,
-                                         self.repo_name,
-                                         self.subpath,
-                                         self.filename_md )
+        self.filepath_md = file_md.filepath
 
         # set out dir
-        if self.repo_name == config.BASE_REPO_NAME:
+        if self.repo.name == config.BASE_REPO_NAME:
             self.out_dir = os.path.join( config.PUBLISH_DIR,
-                                         self.branch_name,
-                                         subpath )
+                                         self.branch.out_name,
+                                         self.subpath.path )
         else:
             self.out_dir = os.path.join( config.PUBLISH_DIR,
-                                         self.branch_name,
-                                         self.repo_name,
-                                         subpath )
+                                         self.branch.out_name,
+                                         self.repo.name,
+                                         self.subpath.path )
         # out filename
-        if page_num == 0:
+        if file_md.num == 0:
             self.out_filename = "index.html"
         else:
-            self.out_filename = os.path.splitext(filename_md)[0]+".html"
+            self.out_filename = os.path.splitext(self.file_md.name)[0]+".html"
         # out path
         self.out_filepath = os.path.join(self.out_dir, self.out_filename)
 
         # navigation
-        self.nav_path = ""
-        self.nav_dirlist = ""
+        #self.nav_path = self.subpath.nav_path
+        #self.nav_dirlist = self.subpath.nav_dirlist
 
         # load markdown and title block
         self.tb_values, \
@@ -72,25 +61,25 @@ class Page:
         self.process_plugin_content()
 
         # primary navigation
-        self.nav_primary = gen_nav_primary( self.branch_name,
-                                            self.filepath_md )
+        self.nav_primary = gen_nav_primary( self.branch.out_name,
+                                            self.file_md.filepath )
 
         # page list
-        self.nav_pagelist = gen_nav_pagelist( self.branch_name,
-                                              self.repo_name,
-                                              self.subpath,
-                                              self.filepath_md )
+        self.nav_pagelist = gen_nav_pagelist( self.branch.out_name,
+                                              self.repo.name,
+                                              self.subpath.path,
+                                              self.file_md.filepath )
 
         # add path and directory list (not on base repo)
-        if self.repo_name != config.BASE_REPO_NAME:
-            self.nav_path = gen_nav_path( self.branch_name,
-                                          self.repo_name,
-                                          self.subpath,
-                                          self.filepath_md )
-            self.nav_dirlist = gen_nav_dirlist( self.branch_name,
-                                                self.repo_name,
-                                                self.subpath,
-                                                self.filepath_md )
+#        if self.repo_name != config.BASE_REPO_NAME:
+#            self.nav_path = gen_nav_path( self.branch_name,
+#                                          self.repo_name,
+#                                          self.subpath,
+#                                          self.filepath_md )
+#            self.nav_dirlist = gen_nav_dirlist( self.branch_name,
+#                                                self.repo_name,
+#                                                self.subpath,
+#                                                self.filepath_md )
 
         # prepare pandoc opts
         self.prepare_pandoc()
@@ -101,7 +90,7 @@ class Page:
 
         # back-substitute plugin content
         if self.plugin_blocks != []:
-            print("Plugin Blocks: ", self.plugin_blocks)
+#            print("Plugin Blocks: ", self.plugin_blocks)
             self.page_html = back_substitute(self.page_html_subst,
                                              self.plugin_blocks)
         else:
@@ -140,15 +129,15 @@ class Page:
 
         # include the current branch
         # (the check is probably not needed, pandoc may do this as well)
-        if self.branch_name != "":
-            self.pandoc_opts.append('--variable=branch:'+self.branch_name)
+        if self.branch.out_name != "":
+            self.pandoc_opts.append('--variable=branch:'+self.branch.name)
 
         # set the title block opts
         for index, tb_value in enumerate(self.tb_values):
             self.pandoc_opts.append('--variable='+config.TB_LINES[index]+':'+tb_value)
 
         # don't put title on first base layout pages
-        if self.repo_name == config.BASE_REPO_NAME and self.page_num == 0:
+        if self.repo.name == config.BASE_REPO_NAME and self.file_md.num == 0:
             self.pandoc_opts.append('--variable=title:')
 
         # include a table of content
@@ -167,12 +156,13 @@ class Page:
             self.pandoc_opts.append('--variable=nav-pagelist:'+self.nav_pagelist)
 
         # add path / directory lists (not on main page)
-        if self.nav_path != "":
-            self.pandoc_opts.append('--variable=nav-path:'+self.nav_path)
-        if self.nav_dirlist != "":
-            self.pandoc_opts.append('--variable=nav-dirlist:'+self.nav_dirlist)
+        if self.subpath.nav_path != "":
+            self.pandoc_opts.append('--variable=nav-path:'+self.subpath.nav_path)
+        if self.subpath.nav_dirlist != "":
+            self.pandoc_opts.append('--variable=nav-dirlist:'+self.subpath.nav_dirlist)
 
         # ... add more opts here ...
 
     def write_out(self):
+#        print("Page: ", self.meta_title, self.out_filepath)
         write_out(self.page_html, self.out_filepath)

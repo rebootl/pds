@@ -11,7 +11,7 @@ import config
 
 from common import get_title, get_dir_desc
 
-def gen_nav_path(branch, repo_name, subpath, active_path):
+def gen_nav_path(branch, repo_name, subpath):
     '''generate a navigation path
 
 <current_repo> / <active_subdirs>
@@ -76,7 +76,7 @@ def gen_nav_pagelist(branch, repo_name, subpath, active_path):
     return menu_pages
 
 
-def gen_nav_dirlist(branch, repo_name, subpath, active_path):
+def gen_nav_dirlist(branch, repo_name, subpath):
     '''generate HTML list of the subdirectories in the current directory
 '''
     # get directory content

@@ -22,10 +22,19 @@ class Repo:
         if has_branch:
             self.branch.repos.append(self)
 
-        # this initiates loading of files and subdirectories
-        self.subpath = Subpath( self )
+        self.load()
 
+        # (has to be done after loading)
         self.set_description()
+
+    def process(self):
+        for subpath in self.subpaths:
+            subpath.process()
+
+
+    def load(self):
+        '''load files, subdirs and pages, recursive'''
+        self.subpath = Subpath(self)
 
     def set_description(self):
         # try description file
@@ -43,67 +52,6 @@ class Repo:
 
         else:
             self.desc = "<pre>No description file or page available...</pre>"
-
-#    def get_files_recurse(self, subpath=""):
-#        dir = os.path.join(config.GIT_WD, self.name, subpath)
-#
-#        # get directory content
-#        dir_content_list = os.listdir(dir)
-#
-#        # filter dir content
-#        md_file_num = 0
-#        subdirs = []
-#        for file in sorted(dir_content_list):
-#            if file.endswith(config.MD_EXT):
-#                file_inst = File_md(file, subpath, md_file_num)
-#                self.md_files.append(file_inst)
-#                md_file_num += 1
-#
-#            elif os.path.isdir(os.path.join(dir, file)):
-#                subdirs.append(file)
-#
-#            # more filters might be specified here
-#            # ...
-#
-#            else:
-#                file_inst = File_other( file,
-#                                        subpath,
-#                                        self.name,
-#                                        self.branch.name )
-#                self.other_files.append(file_inst)
-#
-#            # if no md file found, return (?)
-#
-#        # remove excluded dirs
-#        # (debug print)
-#        #print("SUBDIRS LIST: ", subdirs_list)
-#        for excl_dir in config.EXCLUDE_DIRS:
-#            if excl_dir in subdirs:
-#                subdirs.remove(excl_dir)
-#
-#        # recurse
-#        for subdir in subdirs:
-#            # the subdir needs to be:
-#            subpath_new=os.path.join(subpath, subdir)
-#
-#            self.get_files_recurse(subpath_new)
-
-#    def load_pages(self):
-#        for md_file in self.md_files:
-#            page_inst = Page( self.branch,
-#                                self,
-#                                md_file.subpath,
-#                                md_file.name,
-#                                md_file.num )
-#
-#            self.pages.append(page_inst)
-#
-#            # add subdir instance w/ description (only for first md file)
-#            if md_file.num == 0:
-#                subdir_inst = Subdir( self.subpath,
-#                                      page_inst.meta_title )
-#
-#                self.subdirs.append(subdir_inst)
 
     def checkout(self):
         oldwd = os.getcwd()

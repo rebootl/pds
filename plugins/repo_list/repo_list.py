@@ -12,7 +12,7 @@ def repo_list(branch):
 
     # get the repos from git-wd
 #    repos_list=os.listdir(config.GIT_WD)
-    repos_list = branch.repos
+    repos_list = branch.repos.copy()
 
     # filter out base-repo
     for repo in repos_list:
@@ -33,7 +33,7 @@ def repo_list(branch):
     for repo in repos_list:
 
         # (these links go to the repo/index.html)
-        link_src = os.path.join('/', branch.name, repo.name, "index.html")
+        link_src = os.path.join('/', branch.out_name, repo.name, "index.html")
 
         link_text = repo.name
 
