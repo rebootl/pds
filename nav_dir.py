@@ -10,7 +10,6 @@ import os
 import config
 
 A_HTML = '<a class="{}" href="{}">{}</a>'
-LI_DESC_HTML = '<li><a class="{}" href="{}">{}</a><br />\n{}</li>\n'
 
 def gen_nav_path(subpath):
 
@@ -46,18 +45,18 @@ def gen_nav_path(subpath):
 #
 #
 
+LI_DESC_HTML = '<li><a class="{}" href="{}">{}</a><br />\n{}</li>\n'
+
 def gen_nav_dirlist(subpath):
 
     menu = '<ul>\n'
 
-    for subdir in subpath.subdirs:
+    for subdir in reversed(subpath.subdirs):
 
         link_href = subdir.name
 #        link_text = subdir.pages[0].meta_title
 
-        dir_desc = subdir.desc
-
-        li_item = LI_DESC_HTML.format("", link_href, link_href, dir_desc)
+        li_item = LI_DESC_HTML.format("", link_href, link_href, subdir.desc)
 
         menu = menu + li_item
 

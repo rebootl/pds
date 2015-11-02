@@ -40,17 +40,13 @@ class Subpath:
         # add path and directory list (not on base repo)
         if self.repo.name != config.BASE_REPO_NAME:
             self.nav_path = gen_nav_path(self)
-#            self.nav_path = gen_nav_path( self.repo.branch.out_name,
-#                                          self.repo.name,
-#                                          self.path )
             self.nav_dirlist = gen_nav_dirlist(self)
-#            self.nav_dirlist = gen_nav_dirlist( self.repo.branch.out_name,
-#                                                self.repo.name,
-#                                                self.path )
 
         for page in self.pages:
             page.process()
             page.write_out()
+
+        self.copy_files()
 
         self.active = False
 
@@ -96,23 +92,12 @@ class Subpath:
 
     def load_pages(self):
         for file_md in self.files_md:
-            page_inst = Page( self.repo.branch,
-                              self.repo,
-                              self,
-                              file_md )
+            page_inst = Page( self, file_md )
 
             self.pages.append(page_inst)
 
-# --> what was this for ?
-#            # add subdir instance w/ description (only for first md file)
-#            if md_file.num == 0:
-#                subdir_inst = Subdir( self.subpath,
-#                                      page_inst.meta_title )
-#
-#                self.subdirs.append(subdir_inst)
-
     def copy_files(self):
-        for file_inst in self.other_files:
+        for file_inst in self.files_other:
             file_inst.copy()
 
     def set_description(self):

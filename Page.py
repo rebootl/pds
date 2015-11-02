@@ -6,30 +6,22 @@ import config
 from common import read_tb_and_content, pandoc_pipe, write_out
 from plugin_handler import get_cdata, plugin_cdata_handler, back_substitute
 from nav_primary import gen_nav_primary
-from nav_dir import gen_nav_dirlist, gen_nav_path
 from nav_pages import gen_nav_pagelist
 
 class Page:
 
-    def __init__(self, branch, repo, subpath, file_md):
-        self.branch = branch
-        self.repo = repo
+    def __init__(self, subpath, file_md):
         self.subpath = subpath
+        self.repo = subpath.repo
+        self.branch = subpath.repo.branch
         self.file_md = file_md
 
-        # markdown (input) filepath
-        self.filepath_md = file_md.filepath
-
         # set out dir
-        if self.repo.name == config.BASE_REPO_NAME:
-            self.out_dir = os.path.join( config.PUBLISH_DIR,
-                                         self.branch.out_name,
-                                         self.subpath.path )
-        else:
-            self.out_dir = os.path.join( config.PUBLISH_DIR,
-                                         self.branch.out_name,
-                                         self.repo.name,
-                                         self.subpath.path )
+        self.out_dir = os.path.join( config.PUBLISH_DIR,
+                                     self.branch.out_name,
+                                     self.repo.out_name,
+                                     self.subpath.path )
+
         # out filename
         if file_md.num == 0:
             self.out_filename = "index.html"
@@ -38,14 +30,10 @@ class Page:
         # out path
         self.out_filepath = os.path.join(self.out_dir, self.out_filename)
 
-        # navigation
-        #self.nav_path = self.subpath.nav_path
-        #self.nav_dirlist = self.subpath.nav_dirlist
-
         # load markdown and title block
         self.tb_values, \
-        self.page_body_md = read_tb_and_content(self.filepath_md, 
-                                             config.TB_LINES)
+        self.page_body_md = read_tb_and_content(self.file_md.filepath)
+
         self.meta_title = self.tb_values[0]
         self.meta_author = self.tb_values[1]
         self.meta_date = self.tb_values[2]
@@ -54,31 +42,21 @@ class Page:
 
     def process(self):
         self.active = True
+
         # substitute and process plugin content
+        self.process_plugin_content()
         # sets:
         # - self.page_body_subst
         # - self.cdata_blocks
         # - self.plugin_blocks
         # - self.plugin_blocks_pdf
         # - self.plugin_pandoc_opts
-        self.process_plugin_content()
 
         # primary navigation
         self.nav_primary = gen_nav_primary(self.branch)
 
         # page list
         self.nav_pagelist = gen_nav_pagelist(self.subpath)
-
-        # add path and directory list (not on base repo)
-#        if self.repo_name != config.BASE_REPO_NAME:
-#            self.nav_path = gen_nav_path( self.branch_name,
-#                                          self.repo_name,
-#                                          self.subpath,
-#                                          self.filepath_md )
-#            self.nav_dirlist = gen_nav_dirlist( self.branch_name,
-#                                                self.repo_name,
-#                                                self.subpath,
-#                                                self.filepath_md )
 
         # prepare pandoc opts
         self.prepare_pandoc()
@@ -89,7 +67,6 @@ class Page:
 
         # back-substitute plugin content
         if self.plugin_blocks != []:
-#            print("Plugin Blocks: ", self.plugin_blocks)
             self.page_html = back_substitute(self.page_html_subst,
                                              self.plugin_blocks)
         else:
@@ -165,5 +142,4 @@ class Page:
         # ... add more opts here ...
 
     def write_out(self):
-#        print("Page: ", self.meta_title, self.out_filepath)
         write_out(self.page_html, self.out_filepath)
