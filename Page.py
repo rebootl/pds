@@ -5,8 +5,9 @@ import config
 
 from common import read_tb_and_content, pandoc_pipe, write_out
 from plugin_handler import get_cdata, plugin_cdata_handler, back_substitute
-from nav_prim import gen_nav_primary
-from nav_dir import gen_nav_pagelist, gen_nav_dirlist, gen_nav_path
+from nav_primary import gen_nav_primary
+from nav_dir import gen_nav_dirlist, gen_nav_path
+from nav_pages import gen_nav_pagelist
 
 class Page:
 
@@ -49,8 +50,10 @@ class Page:
         self.meta_author = self.tb_values[1]
         self.meta_date = self.tb_values[2]
 
-    def process(self):
+        self.active = False
 
+    def process(self):
+        self.active = True
         # substitute and process plugin content
         # sets:
         # - self.page_body_subst
@@ -61,14 +64,10 @@ class Page:
         self.process_plugin_content()
 
         # primary navigation
-        self.nav_primary = gen_nav_primary( self.branch.out_name,
-                                            self.file_md.filepath )
+        self.nav_primary = gen_nav_primary(self.branch)
 
         # page list
-        self.nav_pagelist = gen_nav_pagelist( self.branch.out_name,
-                                              self.repo.name,
-                                              self.subpath.path,
-                                              self.file_md.filepath )
+        self.nav_pagelist = gen_nav_pagelist(self.subpath)
 
         # add path and directory list (not on base repo)
 #        if self.repo_name != config.BASE_REPO_NAME:
@@ -95,6 +94,8 @@ class Page:
                                              self.plugin_blocks)
         else:
             self.page_html = self.page_html_subst
+
+        self.active = False
 
     def process_plugin_content(self):
         # plugin substitution

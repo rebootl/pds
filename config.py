@@ -46,7 +46,8 @@ EXCLUDE_DIRS = [ ".git", "localfont" ]
 # files whose content will be integrated in other pages)
 MENU_EXCLUDE_FILES_MD = [ "impressum" ]
 
-# custom navigation: filename of an optional repo description file
+# directory description file
+DIR_DESC_FILENAME = "dir.shortdesc"
 REPO_DESC_FILENAME = "dir.shortdesc"
 
 # Pandoc HTML type

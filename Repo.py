@@ -1,4 +1,4 @@
-'''base repository object'''
+'''repository object'''
 
 import os
 
@@ -7,7 +7,7 @@ import config
 from common import git_cmd, copy_file
 
 from Subpath import Subpath
-from Page import Page
+
 
 class Repo:
 
@@ -16,43 +16,40 @@ class Repo:
         self.branch = branch
 
         self.path_abs = os.path.join(config.GIT_WD, self.name)
-        self.subpaths = []
 
         has_branch = self.checkout()
         if has_branch:
             self.branch.repos.append(self)
+        else:
+            return
 
-        self.load()
+        if self.name == config.BASE_REPO_NAME:
+            self.out_name = ""
+        else:
+            self.out_name = self.name
+
+        # load files, subdirs and pages, "recursive",
+        # (write back subpaths)
+        self.subpaths = []
+        self.subpath = Subpath("repo-root", self)
+
+#        self.load()
 
         # (has to be done after loading)
-        self.set_description()
+        self.desc = self.subpaths[0].desc
+
+#        if self.name == config.BASE_REPO_NAME:
+#            self.branch.nav_primary_items = gen_nav_primary_items(self)
+
+#    def load(self):
+#        '''load files, subdirs and pages, recursive'''
+#        self.subpath = Subpath(self)
 
     def process(self):
         for subpath in self.subpaths:
             subpath.process()
 
-
-    def load(self):
-        '''load files, subdirs and pages, recursive'''
-        self.subpath = Subpath(self)
-
-    def set_description(self):
-        # try description file
-        desc_filepath = os.path.join( self.path_abs,
-                                      config.REPO_DESC_FILENAME )
-
-        if os.path.isfile(desc_filepath):
-            with open(desc_filepath, 'r') as f:
-                self.desc = f.read()
-            return
-
-        # try the first md file
-        elif self.subpath.pages:
-            self.desc = self.subpath.pages[0].meta_title
-
-        else:
-            self.desc = "<pre>No description file or page available...</pre>"
-
+# --> mv this back to git functions
     def checkout(self):
         oldwd = os.getcwd()
         os.chdir( os.path.join(config.GIT_WD, self.name) )

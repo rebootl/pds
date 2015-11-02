@@ -1,4 +1,4 @@
-'''base branch object'''
+'''branch object'''
 
 import os
 

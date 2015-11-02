@@ -10,14 +10,13 @@ from nav_dir import gen_nav_path, gen_nav_dirlist
 
 class Subpath:
 
-    def __init__(self, repo, path=""):
+    def __init__(self, name, repo, path=""):
         repo.subpaths.append(self)
 
+        self.name = name
         self.repo = repo
         self.path = path
 
-# --> todo set
-#        self.desc = desc
         self.nav_path = ""
         self.nav_dirlist = ""
 
@@ -28,30 +27,39 @@ class Subpath:
         self.subdirs = []
 
         self.pages = []
+        self.active = False
 
         self.get_files()
 
         self.load_pages()
 
+        self.set_description()
+
     def process(self):
+        self.active = True
         # add path and directory list (not on base repo)
         if self.repo.name != config.BASE_REPO_NAME:
-            self.nav_path = gen_nav_path( self.repo.branch.out_name,
-                                          self.repo.name,
-                                          self.path )
-            self.nav_dirlist = gen_nav_dirlist( self.repo.branch.out_name,
-                                                self.repo.name,
-                                                self.path )
+            self.nav_path = gen_nav_path(self)
+#            self.nav_path = gen_nav_path( self.repo.branch.out_name,
+#                                          self.repo.name,
+#                                          self.path )
+            self.nav_dirlist = gen_nav_dirlist(self)
+#            self.nav_dirlist = gen_nav_dirlist( self.repo.branch.out_name,
+#                                                self.repo.name,
+#                                                self.path )
 
         for page in self.pages:
             page.process()
             page.write_out()
+
+        self.active = False
 
     def get_files(self):
         # get directory content
         dir_content_list = os.listdir(self.path_abs)
 
         # filter dir content
+        subdirs = []
         md_file_num = 0
         for file in sorted(dir_content_list):
             if file.endswith(config.MD_EXT):
@@ -62,7 +70,7 @@ class Subpath:
                 md_file_num += 1
 
             elif os.path.isdir(os.path.join(self.path_abs, file)):
-                self.subdirs.append(file)
+                subdirs.append(file)
 
             # more filters might be specified here
             # ...
@@ -75,16 +83,16 @@ class Subpath:
             # if no md file found, return (?)
 
         # remove excluded dirs
-        # (debug print)
-        #print("SUBDIRS LIST: ", subdirs_list)
         for excl_dir in config.EXCLUDE_DIRS:
-            if excl_dir in self.subdirs:
-                self.subdirs.remove(excl_dir)
+            if excl_dir in subdirs:
+                subdirs.remove(excl_dir)
 
         # "recurse"
-        for subdir in self.subdirs:
-            subpath_inst = Subpath( self.repo,
+        for subdir in subdirs:
+            subpath_inst = Subpath( subdir,
+                                    self.repo,
                                     os.path.join(self.path, subdir) )
+            self.subdirs.append(subpath_inst)
 
     def load_pages(self):
         for file_md in self.files_md:
@@ -106,3 +114,20 @@ class Subpath:
     def copy_files(self):
         for file_inst in self.other_files:
             file_inst.copy()
+
+    def set_description(self):
+        # try description file
+        desc_filepath = os.path.join( self.path_abs,
+                                      config.DIR_DESC_FILENAME )
+
+        if os.path.isfile(desc_filepath):
+            with open(desc_filepath, 'r') as f:
+                self.desc = f.read()
+            return
+
+        # try the first md file
+        elif self.pages != []:
+            self.desc = self.pages[0].meta_title
+
+        else:
+            self.desc = "<pre>No description file or page available...</pre>"
