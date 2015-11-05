@@ -17,7 +17,7 @@ def gen_nav_pagelist(subpath):
     for page in subpath.pages:
 
         link_href = page.out_filename
-        link_text = page.meta_title
+        link_text = page.title
         if page.active:
             link_active_class = 'active'
         else:

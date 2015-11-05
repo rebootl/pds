@@ -34,9 +34,9 @@ class Page:
         self.tb_values, \
         self.page_body_md = read_tb_and_content(self.file_md.filepath)
 
-        self.meta_title = self.tb_values[0]
-        self.meta_author = self.tb_values[1]
-        self.meta_date = self.tb_values[2]
+        self.title = self.tb_values[0]
+        self.author = self.tb_values[1]
+        self.date = self.tb_values[2]
 
         self.active = False
 

@@ -9,6 +9,7 @@ from plugins.gallery.gallery import gallery
 from plugins.tree.tree import tree
 from plugins.metapost.metapost import metapost, metapost_ext
 from plugins.repo_list.repo_list import repo_list
+from plugins.latest_articles.latest_articles import latest_articles
 
 # Settings
 # --> Pandoc adds newlines into the div now...
@@ -52,6 +53,10 @@ def plugin_cdata_handler(branch, subdir, cdata_blocks):
 
         elif plugin_name == 'REPO_LIST':
             plugin_out, pdf_out, pandoc_opts = repo_list(branch)
+
+        elif plugin_name == 'LATEST_ARTICLES':
+            plugin_out, pdf_out = latest_articles(branch)
+
         #elif plugin_name=' ... ':
         #	plugin_out, pdf_out = plugins. .. (plugin_content)
 

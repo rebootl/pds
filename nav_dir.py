@@ -54,7 +54,7 @@ def gen_nav_dirlist(subpath):
     for subdir in reversed(subpath.subdirs):
 
         link_href = subdir.name
-#        link_text = subdir.pages[0].meta_title
+#        link_text = subdir.pages[0].title
 
         li_item = LI_DESC_HTML.format("", link_href, link_href, subdir.desc)
 

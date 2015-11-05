@@ -112,7 +112,7 @@ class Subpath:
 
         # try the first md file
         elif self.pages != []:
-            self.desc = self.pages[0].meta_title
+            self.desc = self.pages[0].title
 
         else:
             self.desc = "<pre>No description file or page available...</pre>"

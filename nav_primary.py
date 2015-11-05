@@ -21,7 +21,7 @@ def gen_nav_primary(branch):
 
     # site index
     index_href = os.path.join('/', branch_out)
-    link_text = base_repo.subpaths[0].pages[0].meta_title
+    link_text = base_repo.subpaths[0].pages[0].title
     if base_repo.subpaths[0].active:
         link_class = "active"
     else:
@@ -34,7 +34,7 @@ def gen_nav_primary(branch):
     # subdirs
     for subdir in base_repo.subpaths[0].subdirs:
         link_href = os.path.join('/', branch_out, subdir.name)
-        link_text = subdir.pages[0].meta_title
+        link_text = subdir.pages[0].title
         if subdir.active:
             link_class = "active"
         else:
