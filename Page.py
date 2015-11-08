@@ -1,6 +1,9 @@
 '''base page object'''
 
 import os
+
+from datetime import datetime
+
 import config
 
 from common import read_tb_and_content, pandoc_pipe, write_out
@@ -37,6 +40,9 @@ class Page:
         self.title = self.tb_values[0]
         self.author = self.tb_values[1]
         self.date = self.tb_values[2]
+        self.date_obj = create_date_obj(self.date)
+        if self.date_obj == config.BADDATE_STR:
+            print("pds: WARNING:\n  page has a bad date string:", self.file_md.filepath)
 
         self.active = False
 
@@ -143,3 +149,16 @@ class Page:
 
     def write_out(self):
         write_out(self.page_html, self.out_filepath)
+
+
+
+
+
+
+def create_date_obj(date_str):
+    try:
+        date_obj = datetime.strptime(date_str, config.DATE_FORMAT)
+    except ValueError:
+        date_obj = config.BADDATE_STR
+
+    return date_obj
